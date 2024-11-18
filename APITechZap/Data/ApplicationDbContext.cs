@@ -57,4 +57,24 @@ public class ApplicationDbContext : DbContext
     /// </summary>
     public DbSet<WindTurbineType> WindTurbineTypes { get; set; }
 
+    /// <summary>
+    /// Relacionamento entre as tabelas User, UserAdditionalData e Address
+    /// </summary>
+    /// <param name="modelBuilder"></param>
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        // Relacionamento 1:1 entre User e UserAdditionalData
+        modelBuilder.Entity<User>()
+            .HasOne(u => u.UserAdditionalData)
+            .WithOne(uda => uda.User)
+            .HasForeignKey<UserAdditionalData>(uda => uda.IdUser);
+
+        // Relacionamento 1:1 entre UserAdditionalData e Address
+        modelBuilder.Entity<User>()
+            .HasOne(uda => uda.Address)
+            .WithOne(a => a.User)
+            .HasForeignKey<Address>(a => a.IdUser);
+
+        base.OnModelCreating(modelBuilder);
+    }
 }
