@@ -5,10 +5,14 @@ using APITechZap.Models.DTOs;
 using APITechZap.Repository;
 using APITechZap.Repository.Interface;
 using FirebaseAdmin.Auth;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace APITechZap.Services.Authentication;
 
+/// <summary>
+/// Classe de serviço para autenticação de usuários
+/// </summary>
 public class AuthService : IAuthService
 {
     private readonly ApplicationDbContext _dbContext;
@@ -16,8 +20,15 @@ public class AuthService : IAuthService
     private readonly IUserAdditionalDataRepository _userAdditionalDataRepository;
     private readonly IAddressRepository _addressRepository;
 
-    public AuthService(ApplicationDbContext dbContext, HttpClient httpClient,
-        IUserAdditionalDataRepository userAdditionalDataRepository, IAddressRepository addressRepository)
+
+    /// <summary>
+    /// Construtor da classe AuthService
+    /// </summary>
+    /// <param name="dbContext"></param>
+    /// <param name="httpClient"></param>
+    /// <param name="userAdditionalDataRepository"></param>
+    /// <param name="addressRepository"></param>
+    public AuthService(ApplicationDbContext dbContext, HttpClient httpClient, IUserAdditionalDataRepository userAdditionalDataRepository, IAddressRepository addressRepository)
     {
         _dbContext = dbContext;
         _httpClient = httpClient;
@@ -25,6 +36,155 @@ public class AuthService : IAuthService
         _addressRepository = addressRepository;
     }
 
+    /// <summary>
+    /// Método para registrar um novo usuário
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="Exception"></exception>
+    public async Task<string> RegisterAsync(UserRegisterDTO request)
+    {
+        if (request == null || string.IsNullOrEmpty(request.DsEmail) || string.IsNullOrEmpty(request.DsPassword))
+        {
+            throw new ArgumentException("E-mail e senha são obrigatórios.");
+        }
+
+        if (request.DsPassword.Length < 6)
+        {
+            throw new ArgumentException("A senha deve ter pelo menos 6 caracteres.");
+        }
+
+        // Cria o objeto User para o banco de dados
+        var newUser = new User
+        {
+            DsName = request.DsName,
+            DsSurname = request.DsSurname,
+            DsEmail = request.DsEmail,
+            DsPassword = BCrypt.Net.BCrypt.HashPassword(request.DsPassword),
+        };
+
+        using var transaction = await _dbContext.Database.BeginTransactionAsync();
+        try
+        {
+            // Salva o usuário no banco de dados
+            await _dbContext.Users.AddAsync(newUser);
+            await _dbContext.SaveChangesAsync();
+
+            // Commit da transação após salvar o usuário
+            await transaction.CommitAsync();
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            throw new Exception("Erro ao salvar usuário no banco de dados: " + ex.Message, ex);
+        }
+
+        // Registra no Firebase somente após a transação bem-sucedida
+        try
+        {
+            var userArgs = new UserRecordArgs
+            {
+                Email = request.DsEmail,
+                Password = request.DsPassword,
+                Disabled = false
+            };
+
+            var newUserFb = await FirebaseAuth.DefaultInstance.CreateUserAsync(userArgs);
+            newUser.DsUidFirebase = newUserFb.Uid;
+
+            _dbContext.Users.Update(newUser);
+            await _dbContext.SaveChangesAsync();
+
+            return $"Usuário cadastrado com sucesso! \nID do usuário (BD): {newUser.IdUser}, UID (Firebase): {newUserFb.Uid}";
+        }
+        catch (FirebaseAuthException ex)
+        {
+            throw new Exception("Erro ao criar usuário no Firebase: " + ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Método para adicionar dados adicionais a um usuário
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="additionalData"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="Exception"></exception>
+    public async Task<string> AddUserAdditionalDataAsync(int userId, UserAdditionalDataDTO additionalData)
+    {
+        if (additionalData == null)
+        {
+            throw new ArgumentException("Dados adicionais são obrigatórios.");
+        }
+
+        // Encontra o usuário pelo ID
+        var userAdditionalDataDb = await _dbContext.Users.FirstOrDefaultAsync(u => u.IdUser == userId);
+
+        if (userAdditionalDataDb == null)
+        {
+            throw new Exception("Usuário não encontrado.");
+        }
+
+        // Cria os dados adicionais
+        var userAdditionalData = new UserAdditionalData
+        {
+            DsCPF = additionalData.DsCPF,
+            DsPhone = additionalData.DsPhone,
+            DtBirthDate = additionalData.DtBirthDate,
+            DtUpdatedAt = DateTime.Now,
+            IdUser = userAdditionalDataDb.IdUser, // Associa o usuário aos dados adicionais
+        };
+
+        // Salva os dados adicionais no banco de dados
+        var response = await _userAdditionalDataRepository.AddUserAdditionalDataAsync(userAdditionalData);
+
+        return response;
+    }
+
+    /// <summary>
+    /// Metodo para adicionar o endereço nos dados adicionais
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="addressDTO"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public async Task<string> AddAddress(int userId, AddressDTO addressDTO)
+    {
+        var user = await _dbContext.Users
+            .Include(u => u.Address) // Se você deseja carregar o endereço atual
+            .FirstOrDefaultAsync(u => u.IdUser == userId);
+
+        if (user == null)
+        {
+            throw new Exception("Usuário não encontrado.");
+        }
+
+        var address = new Address
+        {
+            DsStreet = addressDTO.DsStreet,
+            DsNumber = addressDTO.DsNumber,
+            DsComplement = addressDTO.DsComplement,
+            DsNeighborhood = addressDTO.DsNeighborhood,
+            DsCity = addressDTO.DsCity,
+            DsState = addressDTO.DsState,
+            DsZipCode = addressDTO.DsZipCode,
+            IdUser = user.IdUser
+        };
+
+        var response = await _addressRepository.AddAddressAsync(address);
+
+        return response;
+    }
+
+    /// <summary>
+    /// Método para autenticar um usuário
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="Exception"></exception>
     public async Task<string> LoginAsync(UserLoginDTO request)
     {
         if (request == null || string.IsNullOrEmpty(request.DsEmail) || string.IsNullOrEmpty(request.DsPassword))
@@ -53,55 +213,13 @@ public class AuthService : IAuthService
         throw new Exception("Falha na autenticação: " + response.ReasonPhrase);
     }
 
-    public async Task<string> RegisterAsync(UserRegisterDTO request)
-    {
-        // Valida os dados de entrada
-        if (request == null || string.IsNullOrEmpty(request.DsEmail) || string.IsNullOrEmpty(request.DsPassword))
-        {
-            throw new ArgumentException("E-mail e senha são obrigatórios.");
-        }
-
-        if (request.DsPassword.Length < 6)
-        {
-            throw new ArgumentException("A senha deve ter pelo menos 6 caracteres.");
-        }
-
-        // Prepara os argumentos para criar um novo usuário no Firebase
-        var userArgs = new UserRecordArgs
-        {
-            Email = request.DsEmail,
-            Password = request.DsPassword,
-            Disabled = false
-        };
-
-        // Cria o usuário no Firebase
-        UserRecord newUserFb;
-        try
-        {
-            newUserFb = await FirebaseAuth.DefaultInstance.CreateUserAsync(userArgs);
-        }
-        catch (FirebaseAuthException ex)
-        {
-            throw new Exception("Erro ao criar usuário no Firebase: " + ex.Message, ex);
-        }
-
-        // Cria um novo objeto User para o banco de dados
-        var newUser = new User
-        {
-            DsUidFirebase = newUserFb.Uid,
-            DsName = request.DsName,
-            DsSurname = request.DsSurname,
-            DsEmail = newUserFb.Email,
-            DsPassword = BCrypt.Net.BCrypt.HashPassword(request.DsPassword) // Criptografa a senha
-        };
-
-        // Adiciona o novo usuário ao banco de dados
-        await _dbContext.Users.AddAsync(newUser);
-        await _dbContext.SaveChangesAsync();
-
-        return $"Usuário cadastrado com sucesso! ID do usuário (BD): {newUser.IdUser}, UID (FB): {newUserFb.Uid}";
-    }
-
+    /// <summary>
+    /// Método para atualizar um usuário pelo e-mail
+    /// </summary>
+    /// <param name="oldEmail"></param>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public async Task<string> UpdateUserByEmailAsync(string oldEmail, UserUpdateDTO request)
     {
         // Busca o usuário no banco de dados
@@ -132,41 +250,17 @@ public class AuthService : IAuthService
 
         userDb.DtUpdatedAt = DateTime.Now;
 
-        userDb.UserAdditionalData = request.UserAdditionalData != null ? new UserAdditionalData
-        {
-            DsCPF = request.UserAdditionalData.DsCPF,
-            DsPhone = request.UserAdditionalData.DsPhone,
-            DtBirthDate = request.UserAdditionalData.DtBirthDate,
-            Address = request.UserAdditionalData.Address != null ? new Address
-            {
-                DsZipCode = request.UserAdditionalData.Address.DsZipCode,
-                DsStreet = request.UserAdditionalData.Address.DsStreet,
-                DsNumber = request.UserAdditionalData.Address.DsNumber,
-                DsComplement = request.UserAdditionalData.Address.DsComplement,
-                DsNeighborhood = request.UserAdditionalData.Address.DsNeighborhood,
-                DsCity = request.UserAdditionalData.Address.DsCity,
-                DsState = request.UserAdditionalData.Address.DsState,
-            } : null
-        } : null;
-
-
-        // Adiciona dados adicionais se disponíveis
-        if (userDb.UserAdditionalData != null)
-        {
-            await _userAdditionalDataRepository.AddUserAdditionalDataAsync(userDb.UserAdditionalData);
-        }
-
-        // Adiciona endereço se disponível
-        if (userDb.UserAdditionalData?.Address != null)
-        {
-            await _addressRepository.AddAddressAsync(userDb.UserAdditionalData.Address);
-        }
-
         await _dbContext.SaveChangesAsync();
 
         return "Usuário atualizado com sucesso!";
     }
 
+    /// <summary>
+    /// Método para atualizar um usuário pelo ID
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public async Task<string> DeleteUserAsync(int userId)
     {
         var userDb = await _dbContext.Users.FirstOrDefaultAsync(r => r.IdUser == userId);
@@ -196,6 +290,12 @@ public class AuthService : IAuthService
         throw new Exception("Usuário não encontrado.");
     }
 
+    /// <summary>
+    /// Método para reativar um usuário
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public async Task<string> ReactiveUserAsync(int userId)
     {
         var userDb = await _dbContext.Users.FirstOrDefaultAsync(r => r.IdUser == userId && r.DtDeletedAt != null);
@@ -224,6 +324,12 @@ public class AuthService : IAuthService
         throw new Exception("Usuário não encontrado.");
     }
 
+    /// <summary>
+    /// Método para redefinir a senha de um usuário
+    /// </summary>
+    /// <param name="actualEmail"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
     public async Task<string> ForgotPasswordUserAsync(string actualEmail)
     {
         if (string.IsNullOrEmpty(actualEmail))

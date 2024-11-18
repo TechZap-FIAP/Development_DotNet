@@ -1,5 +1,6 @@
 ﻿using APITechZap.Models;
 using APITechZap.Models.DTOs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace APITechZap.Services.Authentication;
 
@@ -14,6 +15,22 @@ public interface IAuthService
     /// <param name="request">User object</param>
     /// <returns>Created user</returns>
     Task<string> RegisterAsync(UserRegisterDTO request);
+
+    /// <summary>
+    /// Adiciona os Dados Adicionais no Usuário
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="additionalData"></param>
+    /// <returns></returns>
+    Task<string> AddUserAdditionalDataAsync(int userId, UserAdditionalDataDTO additionalData);
+
+    /// <summary>
+    /// Adiciona o Endereço no Usuário
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="address"></param>
+    /// <returns></returns>
+    Task<string> AddAddress(int userId, [FromBody] AddressDTO address);
 
     /// <summary>
     /// Serviço de Logar usuário.
@@ -37,8 +54,8 @@ public interface IAuthService
     /// <summary>
     /// Serviço de Reativar usuário.
     /// </summary>
-    /// <param name="id">User ID</param>
-    /// <returns>Reactived user</returns>
+    /// <param name="userId"></param>
+    /// <returns></returns>
     Task<string> ReactiveUserAsync(int userId);
 
     /// <summary>
