@@ -22,27 +22,7 @@ public class AddressRepository : IAddressRepository
     }
 
     /// <summary>
-    /// Método para Obter todos os Endereços
-    /// </summary>
-    /// <returns></returns>
-
-    public async Task<IEnumerable<Address>> GetAllAddressesAsync()
-    {
-        return await _dbContext.Addresses.ToListAsync();
-    }
-
-    /// <summary>
-    /// Método para Obter Endereço por Id
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    public async Task<Address?> GetAddressByIdAsync(int id)
-    {
-        return await _dbContext.Addresses.FindAsync(id);
-    }
-
-    /// <summary>
-    /// Método para Adicionar Endereço
+    /// Método para adicionar o endereço
     /// </summary>
     /// <param name="address"></param>
     /// <returns></returns>
@@ -51,11 +31,11 @@ public class AddressRepository : IAddressRepository
         await _dbContext.Addresses.AddAsync(address);
         await _dbContext.SaveChangesAsync();
 
-        return "Endereço Adicionado com Sucesso!";
+        return "Endereço Adicionado com Sucesso";
     }
 
     /// <summary>
-    /// Método para Atualizar Endereço
+    /// Método para atualizar o endereço
     /// </summary>
     /// <param name="address"></param>
     /// <returns></returns>
@@ -64,20 +44,20 @@ public class AddressRepository : IAddressRepository
         _dbContext.Addresses.Update(address);
         await _dbContext.SaveChangesAsync();
 
-        return "Endereço Atualizado com Sucesso!";
+        return "Endereço Atualizado com Sucesso";
     }
 
-    /*
-    public async Task<string> DeleteAddressAsync(int id)
+    /// <summary>
+    /// Método para buscar o endereço pelo Id do Usuário
+    /// </summary>
+    /// <param name="UserId"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public async Task<Address> GetAddressByUserIdAsync(int UserId)
     {
-        var address = await GetAddressByIdAsync(id);
-        if (address != null)
-        {
-            _dbContext.Addresses.Remove(address);
-            await _dbContext.SaveChangesAsync();
-        }
 
-        return "Endereço Deletado com Sucesso";
+        var address = await _dbContext.Addresses.FirstOrDefaultAsync(a => a.IdUser == UserId) ?? throw new Exception("Endereço não encontrado!");
+
+        return address;
     }
-    */
 }

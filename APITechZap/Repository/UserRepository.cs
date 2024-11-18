@@ -10,15 +10,15 @@ namespace APITechZap.Repository;
 /// </summary>
 public class UserRepository : IUserRepository
 {
-    private readonly ApplicationDbContext _context;
+    private readonly ApplicationDbContext _dbContext;
 
     /// <summary>
     /// Constructor for UserRepository
     /// </summary>
-    /// <param name="context"></param>
-    public UserRepository(ApplicationDbContext context)
+    /// <param name="dbContext"></param>
+    public UserRepository(ApplicationDbContext dbContext)
     {
-        _context = context;
+        _dbContext = dbContext;
     }
 
     /// <summary>
@@ -28,11 +28,8 @@ public class UserRepository : IUserRepository
     /// <exception cref="Exception">Usuários não encontrados!</exception>
     public async Task<IEnumerable<User>> GetAllUsersAsync()
     {
-        var users = await _context.Users.Include(u => u.UserAdditionalData).ToListAsync();
-        if (users == null)
-        {
-            throw new Exception("Usuários não encontrados!");
-        }
+        var users = await _dbContext.Users.Include(u => u.UserAdditionalData).Include(u => u.Address).ToListAsync() ?? throw new Exception("Usuários não encontrados!");
+
         return users;
     }
 
@@ -44,12 +41,18 @@ public class UserRepository : IUserRepository
     /// <exception cref="Exception">Usuário não encontrado!</exception>
     public async Task<User> GetUserByIdAsync(int id)
     {
-        var user = await _context.Users.Include(u => u.UserAdditionalData).FirstOrDefaultAsync(u => u.IdUser == id);
-        if (user == null)
-        {
-            throw new Exception("Usuário não encontrado!");
-        }
+        var user = await _dbContext.Users.Include(u => u.UserAdditionalData).Include(u => u.Address).FirstOrDefaultAsync(u => u.IdUser == id) ?? throw new Exception("Usuário não encontrado!");
 
         return user;
+    }
+
+    /// <summary>
+    /// Verify if Email exists
+    /// </summary>
+    /// <param name="email"></param>
+    /// <returns></returns>
+    public async Task<bool> EmailExistsAsync(string email)
+    {
+        return await _dbContext.Users.AnyAsync(u => u.DsEmail == email);
     }
 }
