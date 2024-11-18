@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace APITechZap.Models;
 
@@ -14,6 +15,8 @@ public class ContractedPlan
     /// </summary>
     [Key]
     [Column("ID_CONTRACTED_PLAN")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [JsonIgnore]
     public int IdContractedPlan { get; set; }
 
     // Datas de Criação, Atualização e Exclusão do Plano Contratado

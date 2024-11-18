@@ -14,8 +14,9 @@ public class User
     /// Identificador do Usuário
     /// </summary>
     [Key]
-    [JsonIgnore]
     [Column("ID_USER")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [JsonIgnore]
     public int IdUser { get; set; }
 
     /// <summary>
@@ -75,11 +76,15 @@ public class User
     [JsonIgnore]
     public DateTime? DtDeletedAt { get; set; }
 
-    // Relacionamento com a Tabela de Dados Adicionais
+    // Relacionamento opcional com UserAdditionalData e Address
 
     /// <summary>
     /// Dados Adicionais do Usuário
     /// </summary>
-    [ForeignKey("ID_USER_ADDITIONAL_DATA")]
     public UserAdditionalData? UserAdditionalData { get; set; }
+
+    /// <summary>
+    /// Endereço do Usuário
+    /// </summary>
+    public Address? Address { get; set; }
 }

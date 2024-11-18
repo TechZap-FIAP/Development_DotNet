@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace APITechZap.Models;
 
@@ -14,6 +15,8 @@ public class WindTurbineType
     /// </summary>
     [Key]
     [Column("ID_WIND_TURBINE_TYPE")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [JsonIgnore]
     public int IdWindTurbineType { get; set; }
 
     /// <summary>

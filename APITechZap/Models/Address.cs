@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace APITechZap.Models;
 
@@ -14,6 +15,8 @@ public class Address
     /// </summary>
     [Key]
     [Column("ID_ADDRESS")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [JsonIgnore]
     public int IdAddress { get; set; }
 
     /// <summary>
@@ -58,4 +61,33 @@ public class Address
     [Column("DS_ZIPCODE")]
     public string? DsZipCode { get; set; }
 
+    /// <summary>
+    /// Data de Criação do Usuário
+    /// </summary>
+    [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy - hh:mm:ss}", ApplyFormatInEditMode = true)]
+    [Column("DT_CREATED_AT")]
+    [JsonIgnore]
+    public DateTime DtCreatedAt { get; set; } = DateTime.Now;
+
+    /// <summary>
+    /// Data de Atualização do Usuário
+    /// </summary>
+    [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy - hh:mm:ss}", ApplyFormatInEditMode = true)]
+    [Column("DT_UPDATED_AT")]
+    [JsonIgnore]
+    public DateTime? DtUpdatedAt { get; set; }
+
+    /// <summary>
+    /// Identificador do Usuário
+    /// </summary>
+    [ForeignKey("User")]
+    [Column("ID_USER")]
+    [JsonIgnore]
+    public int IdUser { get; set; }
+
+    /// <summary>
+    /// Usuário Relacionado aos Dados Adicionais
+    /// </summary>
+    [JsonIgnore]
+    public User? User { get; set; }
 }

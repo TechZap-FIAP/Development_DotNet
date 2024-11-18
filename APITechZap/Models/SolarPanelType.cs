@@ -1,8 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace APITechZap.Models;
 
+/// <summary>
+/// Classe que representa o tipo de painel solar
+/// </summary>
 [Table("T_TZ_SOLAR_PANEL_TYPE")]
 public class SolarPanelType
 {
@@ -11,6 +15,8 @@ public class SolarPanelType
     /// </summary>
     [Key]
     [Column("ID_SOLAR_PANEL_TYPE")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [JsonIgnore]
     public int IdSolarPanelType { get; set; }
 
     /// <summary>
