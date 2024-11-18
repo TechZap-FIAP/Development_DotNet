@@ -16,4 +16,6 @@ public interface IUserRepository
     /// <param name="id">User ID</param>
     /// <returns>User</returns>
     Task<User> GetUserByIdAsync(int id);
+
+    Task<bool> EmailExistsAsync(string email);
 }
