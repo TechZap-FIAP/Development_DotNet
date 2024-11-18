@@ -1,5 +1,6 @@
 ﻿using APITechZap.Data;
 using APITechZap.Models;
+using APITechZap.Models.DTOs;
 using APITechZap.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,11 +27,34 @@ public class UserRepository : IUserRepository
     /// </summary>
     /// <returns>Return All Users</returns>
     /// <exception cref="Exception">Usuários não encontrados!</exception>
-    public async Task<IEnumerable<User>> GetAllUsersAsync()
+    public async Task<IEnumerable<UserDetailedDTO>> GetAllUsersAsync()
     {
-        var users = await _dbContext.Users.Include(u => u.UserAdditionalData).Include(u => u.Address).ToListAsync() ?? throw new Exception("Usuários não encontrados!");
+        var users = await _dbContext.Users.Where(u => u.DtDeletedAt == null).Include(u => u.UserAdditionalData).Include(u => u.Address).ToListAsync() ?? throw new Exception("Usuários não encontrados!"); ;
 
-        return users;
+        var userDTOs = users.Select(u => new UserDetailedDTO
+        {
+            DsName = u.DsName,
+            DsSurname = u.DsSurname,
+            DsEmail = u.DsEmail,
+            UserAdditionalDataDTO = u.UserAdditionalData != null ? new UserAdditionalDataDTO
+            {
+                DsCPF = u.UserAdditionalData.DsCPF,
+                DsPhone = u.UserAdditionalData.DsPhone,
+                DtBirthDate = u.UserAdditionalData.DtBirthDate
+            } : null,
+            AddressDTO = u.Address != null ? new AddressDTO
+            {
+                DsStreet = u.Address.DsStreet,
+                DsNumber = u.Address.DsNumber,
+                DsComplement = u.Address.DsComplement,
+                DsNeighborhood = u.Address.DsNeighborhood,
+                DsCity = u.Address.DsCity,
+                DsState = u.Address.DsState,
+                DsZipCode = u.Address.DsZipCode
+            } : null
+        });
+
+        return userDTOs;
     }
 
     /// <summary>
@@ -39,11 +63,34 @@ public class UserRepository : IUserRepository
     /// <param name="id"></param>
     /// <returns>Return User by Id</returns>
     /// <exception cref="Exception">Usuário não encontrado!</exception>
-    public async Task<User> GetUserByIdAsync(int id)
+    public async Task<UserDetailedDTO> GetUserByIdAsync(int id)
     {
-        var user = await _dbContext.Users.Include(u => u.UserAdditionalData).Include(u => u.Address).FirstOrDefaultAsync(u => u.IdUser == id) ?? throw new Exception("Usuário não encontrado!");
+        var user = await _dbContext.Users.Include(u => u.UserAdditionalData).Include(u => u.Address).FirstOrDefaultAsync(u => u.IdUser == id && u.DtDeletedAt == null) ?? throw new Exception("Usuário não encontrado ou Excluido!");
 
-        return user;
+        var userDTO = new UserDetailedDTO
+        {
+            DsName = user.DsName,
+            DsSurname = user.DsSurname,
+            DsEmail = user.DsEmail,
+            UserAdditionalDataDTO = user.UserAdditionalData != null ? new UserAdditionalDataDTO
+            {
+                DsCPF = user.UserAdditionalData.DsCPF,
+                DsPhone = user.UserAdditionalData.DsPhone,
+                DtBirthDate = user.UserAdditionalData.DtBirthDate
+            } : null,
+            AddressDTO = user.Address != null ? new AddressDTO
+            {
+                DsStreet = user.Address.DsStreet,
+                DsNumber = user.Address.DsNumber,
+                DsComplement = user.Address.DsComplement,
+                DsNeighborhood = user.Address.DsNeighborhood,
+                DsCity = user.Address.DsCity,
+                DsState = user.Address.DsState,
+                DsZipCode = user.Address.DsZipCode
+            } : null
+        };
+
+        return userDTO;
     }
 
     /// <summary>

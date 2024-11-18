@@ -55,7 +55,7 @@ public class UsersController : ControllerBase
     /// </summary>
     /// <returns>Return all Users</returns>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
+    public async Task<ActionResult<IEnumerable<UserDetailedDTO>>> GetAllUsers()
     {
         var users = await _userRepository.GetAllUsersAsync();
         return Ok(users);
@@ -67,7 +67,7 @@ public class UsersController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("{id}")]
-    public async Task<ActionResult<User>> GetUserById(int id)
+    public async Task<ActionResult<UserDetailedDTO>> GetUserById(int id)
     {
         var user = await _userRepository.GetUserByIdAsync(id);
 
@@ -149,6 +149,10 @@ public class UsersController : ControllerBase
     /// <param name="email"></param>
     /// <param name="request"></param>
     /// <returns></returns>
+    /// <response code="200">Usuário atualizado com sucesso.</response>
+    /// <response code="400">Erro ao atualizar usuário.</response>
+    /// <response code="404">Usuário não encontrado.</response>
+    /// <response code="500">Erro ao atualizar usuário.</response>
     [HttpPut("update/{email}")]
     public async Task<IActionResult> UpdateUser(string email, [FromBody] UserUpdateDTO request)
     {
@@ -168,6 +172,9 @@ public class UsersController : ControllerBase
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
+    /// <response code="200">Usuário excluído com sucesso.</response>
+    /// <response code="404">Usuário não encontrado.</response>
+    /// <response code="500">Erro ao excluir usuário.</response>
     [HttpDelete("delete/{userId}")]
     public async Task<IActionResult> DeleteUser(int userId)
     {
@@ -187,6 +194,9 @@ public class UsersController : ControllerBase
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
+    /// <response code="200">Usuário reativado com sucesso.</response>
+    /// <response code="404">Usuário não encontrado.</response>
+    /// <response code="500">Erro ao reativar usuário.</response>
     [HttpPost("reactivate/{userId}")]
     public async Task<IActionResult> ReactiveUser(int userId)
     {
@@ -206,17 +216,25 @@ public class UsersController : ControllerBase
     /// </summary>
     /// <param name="email"></param>
     /// <returns></returns>
-    [HttpPost("forgot-password")]
-    public async Task<IActionResult> ForgotPassword([FromBody] string email)
+    /// <summary>
+    /// Redefine a senha pelo E-mail
+    /// </summary>
+    /// <param name="actualEmail">O E-mail do usuário a ser enviado o link de redefinição.</param>
+    /// <returns>Uma mensagem de sucesso.</returns>
+    /// <response code="200">Link Enviado com sucesso.</response>
+    /// <response code="404">Usuário não encontrado.</response>
+    /// <response code="500">Erro ao enviar e-mail de redefinição de senha.</response>
+    [HttpPost("forgot-password/{actualEmail}")]
+    public async Task<ActionResult<string>> ForgotPassword(string actualEmail)
     {
         try
         {
-            var response = await _authService.ForgotPasswordUserAsync(email);
-            return Ok(response); // Return success message
+            var result = await _authService.ForgotPasswordUserAsync(actualEmail);
+            return Ok(result);
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message); // Return error message
+            return BadRequest(ex.Message);
         }
     }
 }

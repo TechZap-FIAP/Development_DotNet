@@ -338,6 +338,6 @@ public class AuthService : IAuthService
         }
 
         var response = await FirebaseAuth.DefaultInstance.GeneratePasswordResetLinkAsync(actualEmail);
-        return "E-mail de redefinição de senha enviado com sucesso!";
+        return response;
     }
 }
