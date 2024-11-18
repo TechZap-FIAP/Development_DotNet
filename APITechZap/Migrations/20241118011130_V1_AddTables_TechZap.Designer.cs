@@ -12,7 +12,7 @@ using Oracle.EntityFrameworkCore.Metadata;
 namespace APITechZap.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241117043940_V1_AddTables_TechZap")]
+    [Migration("20241118011130_V1_AddTables_TechZap")]
     partial class V1_AddTables_TechZap
     {
         /// <inheritdoc />
@@ -62,7 +62,22 @@ namespace APITechZap.Migrations
                         .HasColumnType("NVARCHAR2(2000)")
                         .HasColumnName("DS_ZIPCODE");
 
+                    b.Property<DateTime>("DtCreatedAt")
+                        .HasColumnType("TIMESTAMP(7)")
+                        .HasColumnName("DT_CREATED_AT");
+
+                    b.Property<DateTime?>("DtUpdatedAt")
+                        .HasColumnType("TIMESTAMP(7)")
+                        .HasColumnName("DT_UPDATED_AT");
+
+                    b.Property<int>("IdUser")
+                        .HasColumnType("NUMBER(10)")
+                        .HasColumnName("ID_USER");
+
                     b.HasKey("IdAddress");
+
+                    b.HasIndex("IdUser")
+                        .IsUnique();
 
                     b.ToTable("T_TZ_ADDRESS");
                 });
@@ -224,50 +239,52 @@ namespace APITechZap.Migrations
                         .HasColumnType("TIMESTAMP(7)")
                         .HasColumnName("DT_UPDATED_AT");
 
-                    b.Property<int?>("ID_USER_ADDITIONAL_DATA")
-                        .HasColumnType("NUMBER(10)");
-
                     b.HasKey("IdUser");
-
-                    b.HasIndex("ID_USER_ADDITIONAL_DATA");
 
                     b.ToTable("T_TZ_USER");
                 });
 
             modelBuilder.Entity("APITechZap.Models.UserAdditionalData", b =>
                 {
-                    b.Property<int>("IdAdditionalData")
+                    b.Property<int>("IdUserAdditionalData")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("NUMBER(10)")
-                        .HasColumnName("ID_ADDITIONAL_DATA");
+                        .HasColumnName("ID_USER_ADDITIONAL_DATA");
 
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdAdditionalData"));
+                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdUserAdditionalData"));
 
                     b.Property<string>("DsCPF")
-                        .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("NVARCHAR2(11)")
+                        .HasMaxLength(14)
+                        .HasColumnType("NVARCHAR2(14)")
                         .HasColumnName("DS_CPF");
 
                     b.Property<string>("DsPhone")
-                        .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("NVARCHAR2(15)")
                         .HasColumnName("DS_PHONE");
 
-                    b.Property<string>("DtBirthDate")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR2(10)")
+                    b.Property<DateTime?>("DtBirthDate")
+                        .HasColumnType("TIMESTAMP(7)")
                         .HasColumnName("DT_BIRTH_DATE");
 
-                    b.Property<int?>("ID_ADDRESS")
-                        .HasColumnType("NUMBER(10)");
+                    b.Property<DateTime>("DtCreatedAt")
+                        .HasColumnType("TIMESTAMP(7)")
+                        .HasColumnName("DT_CREATED_AT");
 
-                    b.HasKey("IdAdditionalData");
+                    b.Property<DateTime?>("DtUpdatedAt")
+                        .HasColumnType("TIMESTAMP(7)")
+                        .HasColumnName("DT_UPDATED_AT");
 
-                    b.HasIndex("ID_ADDRESS");
+                    b.Property<int>("IdUser")
+                        .HasColumnType("NUMBER(10)")
+                        .HasColumnName("ID_USER");
 
-                    b.ToTable("T_TZ_ADDITIONAL_DATA");
+                    b.HasKey("IdUserAdditionalData");
+
+                    b.HasIndex("IdUser")
+                        .IsUnique();
+
+                    b.ToTable("T_TZ_USER_ADDITIONAL_DATA");
                 });
 
             modelBuilder.Entity("APITechZap.Models.WindTurbine", b =>
@@ -340,6 +357,17 @@ namespace APITechZap.Migrations
                     b.ToTable("T_TZ_WIND_TURBINE_TYPE");
                 });
 
+            modelBuilder.Entity("APITechZap.Models.Address", b =>
+                {
+                    b.HasOne("APITechZap.Models.User", "User")
+                        .WithOne("Address")
+                        .HasForeignKey("APITechZap.Models.Address", "IdUser")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("APITechZap.Models.ContractedPlan", b =>
                 {
                     b.HasOne("APITechZap.Models.SolarPanel", "solarPanel")
@@ -370,22 +398,15 @@ namespace APITechZap.Migrations
                     b.Navigation("solarPanelType");
                 });
 
-            modelBuilder.Entity("APITechZap.Models.User", b =>
-                {
-                    b.HasOne("APITechZap.Models.UserAdditionalData", "userAdditionalData")
-                        .WithMany()
-                        .HasForeignKey("ID_USER_ADDITIONAL_DATA");
-
-                    b.Navigation("userAdditionalData");
-                });
-
             modelBuilder.Entity("APITechZap.Models.UserAdditionalData", b =>
                 {
-                    b.HasOne("APITechZap.Models.Address", "Address")
-                        .WithMany()
-                        .HasForeignKey("ID_ADDRESS");
+                    b.HasOne("APITechZap.Models.User", "User")
+                        .WithOne("UserAdditionalData")
+                        .HasForeignKey("APITechZap.Models.UserAdditionalData", "IdUser")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Address");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("APITechZap.Models.WindTurbine", b =>
@@ -395,6 +416,13 @@ namespace APITechZap.Migrations
                         .HasForeignKey("ID_WIND_TURBINE_TYPE");
 
                     b.Navigation("WindTurbineType");
+                });
+
+            modelBuilder.Entity("APITechZap.Models.User", b =>
+                {
+                    b.Navigation("Address");
+
+                    b.Navigation("UserAdditionalData");
                 });
 #pragma warning restore 612, 618
         }

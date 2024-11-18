@@ -12,25 +12,6 @@ namespace APITechZap.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "T_TZ_ADDRESS",
-                columns: table => new
-                {
-                    ID_ADDRESS = table.Column<int>(type: "NUMBER(10)", nullable: false)
-                        .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
-                    DS_STREET = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
-                    DS_NUMBER = table.Column<int>(type: "NUMBER(10)", nullable: true),
-                    DS_COMPLEMENT = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
-                    DS_NEIGHBORHOOD = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
-                    DS_CITY = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
-                    DS_STATE = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
-                    DS_ZIPCODE = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_T_TZ_ADDRESS", x => x.ID_ADDRESS);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "T_TZ_SOLAR_PANEL_TYPE",
                 columns: table => new
                 {
@@ -49,6 +30,26 @@ namespace APITechZap.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "T_TZ_USER",
+                columns: table => new
+                {
+                    ID_USER = table.Column<int>(type: "NUMBER(10)", nullable: false)
+                        .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
+                    DS_UID_FB = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
+                    DS_NAME = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
+                    DS_SURNAME = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
+                    DS_EMAIL = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
+                    DS_PASSWORD = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
+                    DT_CREATED_AT = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
+                    DT_UPDATED_AT = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: true),
+                    DT_DELETED_AT = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_T_TZ_USER", x => x.ID_USER);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "T_TZ_WIND_TURBINE_TYPE",
                 columns: table => new
                 {
@@ -63,27 +64,6 @@ namespace APITechZap.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_T_TZ_WIND_TURBINE_TYPE", x => x.ID_WIND_TURBINE_TYPE);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "T_TZ_ADDITIONAL_DATA",
-                columns: table => new
-                {
-                    ID_ADDITIONAL_DATA = table.Column<int>(type: "NUMBER(10)", nullable: false)
-                        .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
-                    DT_BIRTH_DATE = table.Column<string>(type: "NVARCHAR2(10)", nullable: false),
-                    DS_CPF = table.Column<string>(type: "NVARCHAR2(11)", maxLength: 11, nullable: false),
-                    DS_PHONE = table.Column<string>(type: "NVARCHAR2(15)", maxLength: 15, nullable: false),
-                    ID_ADDRESS = table.Column<int>(type: "NUMBER(10)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_T_TZ_ADDITIONAL_DATA", x => x.ID_ADDITIONAL_DATA);
-                    table.ForeignKey(
-                        name: "FK_T_TZ_ADDITIONAL_DATA_T_TZ_ADDRESS_ID_ADDRESS",
-                        column: x => x.ID_ADDRESS,
-                        principalTable: "T_TZ_ADDRESS",
-                        principalColumn: "ID_ADDRESS");
                 });
 
             migrationBuilder.CreateTable(
@@ -108,6 +88,58 @@ namespace APITechZap.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "T_TZ_ADDRESS",
+                columns: table => new
+                {
+                    ID_ADDRESS = table.Column<int>(type: "NUMBER(10)", nullable: false)
+                        .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
+                    DS_STREET = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
+                    DS_NUMBER = table.Column<int>(type: "NUMBER(10)", nullable: true),
+                    DS_COMPLEMENT = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
+                    DS_NEIGHBORHOOD = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
+                    DS_CITY = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
+                    DS_STATE = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
+                    DS_ZIPCODE = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
+                    DT_CREATED_AT = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
+                    DT_UPDATED_AT = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: true),
+                    ID_USER = table.Column<int>(type: "NUMBER(10)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_T_TZ_ADDRESS", x => x.ID_ADDRESS);
+                    table.ForeignKey(
+                        name: "FK_T_TZ_ADDRESS_T_TZ_USER_ID_USER",
+                        column: x => x.ID_USER,
+                        principalTable: "T_TZ_USER",
+                        principalColumn: "ID_USER",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "T_TZ_USER_ADDITIONAL_DATA",
+                columns: table => new
+                {
+                    ID_USER_ADDITIONAL_DATA = table.Column<int>(type: "NUMBER(10)", nullable: false)
+                        .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
+                    DT_BIRTH_DATE = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: true),
+                    DS_CPF = table.Column<string>(type: "NVARCHAR2(14)", maxLength: 14, nullable: true),
+                    DS_PHONE = table.Column<string>(type: "NVARCHAR2(15)", maxLength: 15, nullable: true),
+                    DT_CREATED_AT = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
+                    DT_UPDATED_AT = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: true),
+                    ID_USER = table.Column<int>(type: "NUMBER(10)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_T_TZ_USER_ADDITIONAL_DATA", x => x.ID_USER_ADDITIONAL_DATA);
+                    table.ForeignKey(
+                        name: "FK_T_TZ_USER_ADDITIONAL_DATA_T_TZ_USER_ID_USER",
+                        column: x => x.ID_USER,
+                        principalTable: "T_TZ_USER",
+                        principalColumn: "ID_USER",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "T_TZ_WIND_TURBINE",
                 columns: table => new
                 {
@@ -126,32 +158,6 @@ namespace APITechZap.Migrations
                         column: x => x.ID_WIND_TURBINE_TYPE,
                         principalTable: "T_TZ_WIND_TURBINE_TYPE",
                         principalColumn: "ID_WIND_TURBINE_TYPE");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "T_TZ_USER",
-                columns: table => new
-                {
-                    ID_USER = table.Column<int>(type: "NUMBER(10)", nullable: false)
-                        .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
-                    DS_UID_FB = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
-                    DS_NAME = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    DS_SURNAME = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    DS_EMAIL = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    DS_PASSWORD = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    DT_CREATED_AT = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
-                    DT_UPDATED_AT = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: true),
-                    DT_DELETED_AT = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: true),
-                    ID_USER_ADDITIONAL_DATA = table.Column<int>(type: "NUMBER(10)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_T_TZ_USER", x => x.ID_USER);
-                    table.ForeignKey(
-                        name: "FK_T_TZ_USER_T_TZ_ADDITIONAL_DATA_ID_USER_ADDITIONAL_DATA",
-                        column: x => x.ID_USER_ADDITIONAL_DATA,
-                        principalTable: "T_TZ_ADDITIONAL_DATA",
-                        principalColumn: "ID_ADDITIONAL_DATA");
                 });
 
             migrationBuilder.CreateTable(
@@ -188,9 +194,10 @@ namespace APITechZap.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_T_TZ_ADDITIONAL_DATA_ID_ADDRESS",
-                table: "T_TZ_ADDITIONAL_DATA",
-                column: "ID_ADDRESS");
+                name: "IX_T_TZ_ADDRESS_ID_USER",
+                table: "T_TZ_ADDRESS",
+                column: "ID_USER",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_T_TZ_CONTRACTED_PLAN_ID_SOLAR_PANEL",
@@ -213,9 +220,10 @@ namespace APITechZap.Migrations
                 column: "ID_SOLAR_PANEL_TYPE");
 
             migrationBuilder.CreateIndex(
-                name: "IX_T_TZ_USER_ID_USER_ADDITIONAL_DATA",
-                table: "T_TZ_USER",
-                column: "ID_USER_ADDITIONAL_DATA");
+                name: "IX_T_TZ_USER_ADDITIONAL_DATA_ID_USER",
+                table: "T_TZ_USER_ADDITIONAL_DATA",
+                column: "ID_USER",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_T_TZ_WIND_TURBINE_ID_WIND_TURBINE_TYPE",
@@ -227,28 +235,28 @@ namespace APITechZap.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "T_TZ_ADDRESS");
+
+            migrationBuilder.DropTable(
                 name: "T_TZ_CONTRACTED_PLAN");
+
+            migrationBuilder.DropTable(
+                name: "T_TZ_USER_ADDITIONAL_DATA");
 
             migrationBuilder.DropTable(
                 name: "T_TZ_SOLAR_PANEL");
 
             migrationBuilder.DropTable(
-                name: "T_TZ_USER");
+                name: "T_TZ_WIND_TURBINE");
 
             migrationBuilder.DropTable(
-                name: "T_TZ_WIND_TURBINE");
+                name: "T_TZ_USER");
 
             migrationBuilder.DropTable(
                 name: "T_TZ_SOLAR_PANEL_TYPE");
 
             migrationBuilder.DropTable(
-                name: "T_TZ_ADDITIONAL_DATA");
-
-            migrationBuilder.DropTable(
                 name: "T_TZ_WIND_TURBINE_TYPE");
-
-            migrationBuilder.DropTable(
-                name: "T_TZ_ADDRESS");
         }
     }
 }
