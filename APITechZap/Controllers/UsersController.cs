@@ -212,11 +212,6 @@ public class UsersController : ControllerBase
     }
 
     /// <summary>
-    /// Forgot password
-    /// </summary>
-    /// <param name="email"></param>
-    /// <returns></returns>
-    /// <summary>
     /// Redefine a senha pelo E-mail
     /// </summary>
     /// <param name="actualEmail">O E-mail do usuário a ser enviado o link de redefinição.</param>
