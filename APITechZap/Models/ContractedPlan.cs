@@ -24,37 +24,57 @@ public class ContractedPlan
     /// Data de Criação do Plano Contratado
     /// </summary>
     [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy - hh:mm:ss}", ApplyFormatInEditMode = true)]
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime DtCreatedAt { get; set; } = DateTime.Now;
 
     /// <summary>
     /// Data de Atualização do Plano Contratado
     /// </summary>
     [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy - hh:mm:ss}", ApplyFormatInEditMode = true)]
-    public DateTime? UpdatedAt { get; set; }
+    public DateTime? DtUpdatedAt { get; set; }
 
     /// <summary>
     /// Data de Exclusão do Plano Contratado
     /// </summary>
     [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy - hh:mm:ss}", ApplyFormatInEditMode = true)]
-    public DateTime? DeletedAt { get; set; }
+    public DateTime? DtDeletedAt { get; set; }
 
-    // Relacionamentos com outras tabelas
+
+    // Relacionamento com a entidade User
+    /// <summary>
+    /// Identificador do Usuário associado
+    /// </summary>
+    [Column("ID_USER")]
+    [JsonIgnore]
+    public int? IdUser { get; set; }
 
     /// <summary>
-    /// Identificador do Usuário
+    /// Dados do Usuário
     /// </summary>
-    [ForeignKey("ID_USER")]
-    public User? user { get; set; }
+    public User? User { get; set; }
+
+    // Relacionamento com a entidade SolarPanel
+    /// <summary>
+    /// Identificador do Painel Solar associado
+    /// </summary>
+    [Column("ID_SOLAR_PANEL")]
+    [JsonIgnore]
+    public int? IdSolarPanel { get; set; }
 
     /// <summary>
-    /// Identificador do Painel Solar
+    /// Dados do Painel Solar
     /// </summary>
-    [ForeignKey("ID_SOLAR_PANEL")]
-    public SolarPanel? solarPanel { get; set; }
+    public SolarPanel? SolarPanel { get; set; }
+
+    // Relacionamento com a entidade WindTurbine
+    /// <summary>
+    /// Identificador da Turbina Eólica associada
+    /// </summary>
+    [Column("ID_WIND_TURBINE")]
+    [JsonIgnore]
+    public int? IdWindTurbine { get; set; }
 
     /// <summary>
-    /// Identificador da Turbina Eólica
+    /// Dados da Turbina Eólica
     /// </summary>
-    [ForeignKey("ID_WIND_TURBINE")]
-    public WindTurbine? windTurbine { get; set; }
+    public WindTurbine? WindTurbine { get; set; }
 }

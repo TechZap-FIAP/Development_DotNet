@@ -69,11 +69,29 @@ public class ApplicationDbContext : DbContext
             .WithOne(uda => uda.User)
             .HasForeignKey<UserAdditionalData>(uda => uda.IdUser);
 
-        // Relacionamento 1:1 entre UserAdditionalData e Address
+        // Relacionamento 1:1 entre User e Address
         modelBuilder.Entity<User>()
             .HasOne(uda => uda.Address)
             .WithOne(a => a.User)
             .HasForeignKey<Address>(a => a.IdUser);
+
+        // Relacionamento 1:N entre User e ContractedPlan
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.ContractedPlans)
+            .WithOne(cp => cp.User)
+            .HasForeignKey(cp => cp.IdUser);
+
+        // Relacionamento 1:1 entre ContractedPlan e SolarPanel
+        modelBuilder.Entity<ContractedPlan>()
+            .HasOne(cp => cp.SolarPanel)
+            .WithOne()
+            .HasForeignKey<ContractedPlan>(cp => cp.IdSolarPanel);
+
+        // Relacionamento 1:1 entre ContractedPlan e WindTurbine
+        modelBuilder.Entity<ContractedPlan>()
+            .HasOne(cp => cp.WindTurbine)
+            .WithOne()
+            .HasForeignKey<ContractedPlan>(cp => cp.IdWindTurbine);
 
         base.OnModelCreating(modelBuilder);
     }

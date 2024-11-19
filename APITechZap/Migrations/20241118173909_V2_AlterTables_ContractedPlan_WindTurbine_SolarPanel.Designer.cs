@@ -3,6 +3,7 @@ using System;
 using APITechZap.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Oracle.EntityFrameworkCore.Metadata;
 
@@ -11,9 +12,11 @@ using Oracle.EntityFrameworkCore.Metadata;
 namespace APITechZap.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241118173909_V2_AlterTables_ContractedPlan_WindTurbine_SolarPanel")]
+    partial class V2_AlterTables_ContractedPlan_WindTurbine_SolarPanel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,7 +118,9 @@ namespace APITechZap.Migrations
                         .IsUnique()
                         .HasFilter("\"ID_SOLAR_PANEL\" IS NOT NULL");
 
-                    b.HasIndex("IdUser");
+                    b.HasIndex("IdUser")
+                        .IsUnique()
+                        .HasFilter("\"ID_USER\" IS NOT NULL");
 
                     b.HasIndex("IdWindTurbine")
                         .IsUnique()
@@ -378,8 +383,8 @@ namespace APITechZap.Migrations
                         .HasForeignKey("APITechZap.Models.ContractedPlan", "IdSolarPanel");
 
                     b.HasOne("APITechZap.Models.User", "User")
-                        .WithMany("ContractedPlans")
-                        .HasForeignKey("IdUser");
+                        .WithOne()
+                        .HasForeignKey("APITechZap.Models.ContractedPlan", "IdUser");
 
                     b.HasOne("APITechZap.Models.WindTurbine", "WindTurbine")
                         .WithOne()
@@ -424,8 +429,6 @@ namespace APITechZap.Migrations
             modelBuilder.Entity("APITechZap.Models.User", b =>
                 {
                     b.Navigation("Address");
-
-                    b.Navigation("ContractedPlans");
 
                     b.Navigation("UserAdditionalData");
                 });

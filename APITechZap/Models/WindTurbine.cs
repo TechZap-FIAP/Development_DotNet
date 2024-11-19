@@ -23,19 +23,19 @@ public class WindTurbine
     /// Tamanho da Turbina Eólica
     /// </summary>
     [Column("DS_SIZE")]
-    public double DsSize { get; set; }
+    public double? DsSize { get; set; }
 
     /// <summary>
     /// Material da Turbina Eólica
     /// </summary>
     [Column("DS_MATERIAL")]
-    public string DsMaterial { get; set; }
+    public string? DsMaterial { get; set; }
 
     /// <summary>
     /// Preço da Turbina Eólica
     /// </summary>
     [Column("DS_PRICE")]
-    public double DsPrice { get; set; }
+    public double? DsPrice { get; set; }
 
     /// <summary>
     /// Tipo da Turbina Eólica

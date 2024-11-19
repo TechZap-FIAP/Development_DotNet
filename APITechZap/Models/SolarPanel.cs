@@ -40,6 +40,5 @@ public class SolarPanel
     /// <summary>
     /// Tipo do painel solar
     /// </summary>
-    [ForeignKey("ID_SOLAR_PANEL_TYPE")]
-    public SolarPanelType? solarPanelType { get; set; }
+    public SolarPanelType? SolarPanelType { get; set; }
 }

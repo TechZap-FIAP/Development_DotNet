@@ -87,4 +87,9 @@ public class User
     /// Endereço do Usuário
     /// </summary>
     public Address? Address { get; set; }
+
+    /// <summary>
+    /// Planos Contratados pelo Usuário
+    /// </summary>
+    public ICollection<ContractedPlan>? ContractedPlans { get; set; }
 }
