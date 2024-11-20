@@ -17,12 +17,12 @@ namespace APITechZap.Migrations
                 {
                     ID_SOLAR_PANEL_TYPE = table.Column<int>(type: "NUMBER(10)", nullable: false)
                         .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
-                    DS_VOLTAGE = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    DS_MODEL = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    DS_MANUFACTURER = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    DS_CELL_TYPE = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    DS_COST_PER_WATTS = table.Column<double>(type: "BINARY_DOUBLE", nullable: false),
-                    DS_PRODUCT_WARRANTY = table.Column<int>(type: "NUMBER(10)", nullable: false)
+                    DS_VOLTAGE = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
+                    DS_MODEL = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
+                    DS_MANUFACTURER = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
+                    DS_CELL_TYPE = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
+                    DS_COST_PER_WATTS = table.Column<double>(type: "BINARY_DOUBLE", nullable: true),
+                    DS_PRODUCT_WARRANTY = table.Column<int>(type: "NUMBER(10)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -55,10 +55,10 @@ namespace APITechZap.Migrations
                 {
                     ID_WIND_TURBINE_TYPE = table.Column<int>(type: "NUMBER(10)", nullable: false)
                         .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
-                    DS_VOLTAGE = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    DS_MODEL = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    DS_MANUFACTURER = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    DS_GENERATOR_TYPE = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
+                    DS_VOLTAGE = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
+                    DS_MODEL = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
+                    DS_MANUFACTURER = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
+                    DS_GENERATOR_TYPE = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
                     DS_WARRANTY_YEARS = table.Column<int>(type: "NUMBER(10)", nullable: false)
                 },
                 constraints: table =>
@@ -72,17 +72,17 @@ namespace APITechZap.Migrations
                 {
                     ID_SOLAR_PANEL = table.Column<int>(type: "NUMBER(10)", nullable: false)
                         .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
-                    DS_SIZE = table.Column<double>(type: "BINARY_DOUBLE", nullable: false),
-                    DS_MATERIAL = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    DS_PRICE = table.Column<double>(type: "BINARY_DOUBLE", nullable: false),
-                    ID_SOLAR_PANEL_TYPE = table.Column<int>(type: "NUMBER(10)", nullable: true)
+                    DS_SIZE = table.Column<double>(type: "BINARY_DOUBLE", nullable: true),
+                    DS_MATERIAL = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
+                    DS_PRICE = table.Column<double>(type: "BINARY_DOUBLE", nullable: true),
+                    SolarPanelTypeIdSolarPanelType = table.Column<int>(type: "NUMBER(10)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_T_TZ_SOLAR_PANEL", x => x.ID_SOLAR_PANEL);
                     table.ForeignKey(
-                        name: "FK_T_TZ_SOLAR_PANEL_T_TZ_SOLAR_PANEL_TYPE_ID_SOLAR_PANEL_TYPE",
-                        column: x => x.ID_SOLAR_PANEL_TYPE,
+                        name: "FK_T_TZ_SOLAR_PANEL_T_TZ_SOLAR_PANEL_TYPE_SolarPanelTypeIdSolarPanelType",
+                        column: x => x.SolarPanelTypeIdSolarPanelType,
                         principalTable: "T_TZ_SOLAR_PANEL_TYPE",
                         principalColumn: "ID_SOLAR_PANEL_TYPE");
                 });
@@ -145,17 +145,17 @@ namespace APITechZap.Migrations
                 {
                     ID_WIND_TURBINE = table.Column<int>(type: "NUMBER(10)", nullable: false)
                         .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
-                    DS_SIZE = table.Column<double>(type: "BINARY_DOUBLE", nullable: false),
-                    DS_MATERIAL = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    DS_PRICE = table.Column<double>(type: "BINARY_DOUBLE", nullable: false),
-                    ID_WIND_TURBINE_TYPE = table.Column<int>(type: "NUMBER(10)", nullable: true)
+                    DS_SIZE = table.Column<double>(type: "BINARY_DOUBLE", nullable: true),
+                    DS_MATERIAL = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
+                    DS_PRICE = table.Column<double>(type: "BINARY_DOUBLE", nullable: true),
+                    WindTurbineTypeIdWindTurbineType = table.Column<int>(type: "NUMBER(10)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_T_TZ_WIND_TURBINE", x => x.ID_WIND_TURBINE);
                     table.ForeignKey(
-                        name: "FK_T_TZ_WIND_TURBINE_T_TZ_WIND_TURBINE_TYPE_ID_WIND_TURBINE_TYPE",
-                        column: x => x.ID_WIND_TURBINE_TYPE,
+                        name: "FK_T_TZ_WIND_TURBINE_T_TZ_WIND_TURBINE_TYPE_WindTurbineTypeIdWindTurbineType",
+                        column: x => x.WindTurbineTypeIdWindTurbineType,
                         principalTable: "T_TZ_WIND_TURBINE_TYPE",
                         principalColumn: "ID_WIND_TURBINE_TYPE");
                 });
@@ -166,9 +166,9 @@ namespace APITechZap.Migrations
                 {
                     ID_CONTRACTED_PLAN = table.Column<int>(type: "NUMBER(10)", nullable: false)
                         .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
-                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: true),
+                    DtCreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
+                    DtUpdatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: true),
+                    DtDeletedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: true),
                     ID_USER = table.Column<int>(type: "NUMBER(10)", nullable: true),
                     ID_SOLAR_PANEL = table.Column<int>(type: "NUMBER(10)", nullable: true),
                     ID_WIND_TURBINE = table.Column<int>(type: "NUMBER(10)", nullable: true)
@@ -202,7 +202,9 @@ namespace APITechZap.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_T_TZ_CONTRACTED_PLAN_ID_SOLAR_PANEL",
                 table: "T_TZ_CONTRACTED_PLAN",
-                column: "ID_SOLAR_PANEL");
+                column: "ID_SOLAR_PANEL",
+                unique: true,
+                filter: "\"ID_SOLAR_PANEL\" IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_T_TZ_CONTRACTED_PLAN_ID_USER",
@@ -212,12 +214,14 @@ namespace APITechZap.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_T_TZ_CONTRACTED_PLAN_ID_WIND_TURBINE",
                 table: "T_TZ_CONTRACTED_PLAN",
-                column: "ID_WIND_TURBINE");
+                column: "ID_WIND_TURBINE",
+                unique: true,
+                filter: "\"ID_WIND_TURBINE\" IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_T_TZ_SOLAR_PANEL_ID_SOLAR_PANEL_TYPE",
+                name: "IX_T_TZ_SOLAR_PANEL_SolarPanelTypeIdSolarPanelType",
                 table: "T_TZ_SOLAR_PANEL",
-                column: "ID_SOLAR_PANEL_TYPE");
+                column: "SolarPanelTypeIdSolarPanelType");
 
             migrationBuilder.CreateIndex(
                 name: "IX_T_TZ_USER_ADDITIONAL_DATA_ID_USER",
@@ -226,9 +230,9 @@ namespace APITechZap.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_T_TZ_WIND_TURBINE_ID_WIND_TURBINE_TYPE",
+                name: "IX_T_TZ_WIND_TURBINE_WindTurbineTypeIdWindTurbineType",
                 table: "T_TZ_WIND_TURBINE",
-                column: "ID_WIND_TURBINE_TYPE");
+                column: "WindTurbineTypeIdWindTurbineType");
         }
 
         /// <inheritdoc />

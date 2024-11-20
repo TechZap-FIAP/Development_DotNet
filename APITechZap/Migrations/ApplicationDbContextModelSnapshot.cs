@@ -134,15 +134,14 @@ namespace APITechZap.Migrations
                     OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdSolarPanel"));
 
                     b.Property<string>("DsMaterial")
-                        .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)")
                         .HasColumnName("DS_MATERIAL");
 
-                    b.Property<double>("DsPrice")
+                    b.Property<double?>("DsPrice")
                         .HasColumnType("BINARY_DOUBLE")
                         .HasColumnName("DS_PRICE");
 
-                    b.Property<double>("DsSize")
+                    b.Property<double?>("DsSize")
                         .HasColumnType("BINARY_DOUBLE")
                         .HasColumnName("DS_SIZE");
 
@@ -166,30 +165,26 @@ namespace APITechZap.Migrations
                     OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdSolarPanelType"));
 
                     b.Property<string>("DsCellType")
-                        .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)")
                         .HasColumnName("DS_CELL_TYPE");
 
-                    b.Property<double>("DsCostPerWatts")
+                    b.Property<double?>("DsCostPerWatts")
                         .HasColumnType("BINARY_DOUBLE")
                         .HasColumnName("DS_COST_PER_WATTS");
 
                     b.Property<string>("DsManufacturer")
-                        .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)")
                         .HasColumnName("DS_MANUFACTURER");
 
                     b.Property<string>("DsModel")
-                        .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)")
                         .HasColumnName("DS_MODEL");
 
-                    b.Property<int>("DsProductWarranty")
+                    b.Property<int?>("DsProductWarranty")
                         .HasColumnType("NUMBER(10)")
                         .HasColumnName("DS_PRODUCT_WARRANTY");
 
                     b.Property<string>("DsVoltage")
-                        .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)")
                         .HasColumnName("DS_VOLTAGE");
 
@@ -312,12 +307,12 @@ namespace APITechZap.Migrations
                         .HasColumnType("BINARY_DOUBLE")
                         .HasColumnName("DS_SIZE");
 
-                    b.Property<int?>("ID_WIND_TURBINE_TYPE")
+                    b.Property<int?>("WindTurbineTypeIdWindTurbineType")
                         .HasColumnType("NUMBER(10)");
 
                     b.HasKey("IdWindTurbine");
 
-                    b.HasIndex("ID_WIND_TURBINE_TYPE");
+                    b.HasIndex("WindTurbineTypeIdWindTurbineType");
 
                     b.ToTable("T_TZ_WIND_TURBINE");
                 });
@@ -332,22 +327,18 @@ namespace APITechZap.Migrations
                     OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdWindTurbineType"));
 
                     b.Property<string>("DsGeneratorType")
-                        .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)")
                         .HasColumnName("DS_GENERATOR_TYPE");
 
                     b.Property<string>("DsManufacturer")
-                        .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)")
                         .HasColumnName("DS_MANUFACTURER");
 
                     b.Property<string>("DsModel")
-                        .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)")
                         .HasColumnName("DS_MODEL");
 
                     b.Property<string>("DsVoltage")
-                        .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)")
                         .HasColumnName("DS_VOLTAGE");
 
@@ -416,7 +407,7 @@ namespace APITechZap.Migrations
                 {
                     b.HasOne("APITechZap.Models.WindTurbineType", "WindTurbineType")
                         .WithMany()
-                        .HasForeignKey("ID_WIND_TURBINE_TYPE");
+                        .HasForeignKey("WindTurbineTypeIdWindTurbineType");
 
                     b.Navigation("WindTurbineType");
                 });
