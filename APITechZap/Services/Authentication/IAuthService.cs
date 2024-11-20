@@ -1,5 +1,6 @@
 ﻿using APITechZap.Models;
-using APITechZap.Models.DTOs;
+using APITechZap.Models.DTOs.UserAdditionalDataDTOs;
+using APITechZap.Models.DTOs.UserDTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APITechZap.Services.Authentication;
@@ -17,22 +18,6 @@ public interface IAuthService
     Task<string> RegisterAsync(UserRegisterDTO request);
 
     /// <summary>
-    /// Adiciona os Dados Adicionais no Usuário
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="additionalData"></param>
-    /// <returns></returns>
-    Task<string> AddUserAdditionalDataAsync(int userId, UserAdditionalDataDTO additionalData);
-
-    /// <summary>
-    /// Adiciona o Endereço no Usuário
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="address"></param>
-    /// <returns></returns>
-    Task<string> AddAddress(int userId, [FromBody] AddressDTO address);
-
-    /// <summary>
     /// Serviço de Logar usuário.
     /// </summary>
     Task<string> LoginAsync(UserLoginDTO request);
@@ -40,9 +25,9 @@ public interface IAuthService
     /// <summary>
     /// Serviço de Atualizar usuário.
     /// </summary>
-    /// <param name="oldEmail">User email</param>
+    /// <param name="userId">User Id</param>
     /// <param name="request">User object</param>
-    Task<string> UpdateUserByEmailAsync(string oldEmail, UserUpdateDTO request);
+    Task<string> UpdateUserByIdAsync(int userId, UserUpdateDTO request);
 
     /// <summary>
     /// Serviço de Deletar usuário.

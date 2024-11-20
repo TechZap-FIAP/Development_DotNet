@@ -1,7 +1,7 @@
 ﻿using ApiGreenway.Models;
 using APITechZap.Data;
 using APITechZap.Models;
-using APITechZap.Models.DTOs;
+using APITechZap.Models.DTOs.UserDTOs;
 using APITechZap.Repository;
 using APITechZap.Repository.Interface;
 using FirebaseAdmin.Auth;
@@ -17,8 +17,6 @@ public class AuthService : IAuthService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly HttpClient _httpClient;
-    private readonly IUserAdditionalDataRepository _userAdditionalDataRepository;
-    private readonly IAddressRepository _addressRepository;
 
 
     /// <summary>
@@ -28,12 +26,10 @@ public class AuthService : IAuthService
     /// <param name="httpClient"></param>
     /// <param name="userAdditionalDataRepository"></param>
     /// <param name="addressRepository"></param>
-    public AuthService(ApplicationDbContext dbContext, HttpClient httpClient, IUserAdditionalDataRepository userAdditionalDataRepository, IAddressRepository addressRepository)
+    public AuthService(ApplicationDbContext dbContext, HttpClient httpClient)
     {
         _dbContext = dbContext;
         _httpClient = httpClient;
-        _userAdditionalDataRepository = userAdditionalDataRepository;
-        _addressRepository = addressRepository;
     }
 
     /// <summary>
@@ -105,80 +101,6 @@ public class AuthService : IAuthService
     }
 
     /// <summary>
-    /// Método para adicionar dados adicionais a um usuário
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="additionalData"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    /// <exception cref="Exception"></exception>
-    public async Task<string> AddUserAdditionalDataAsync(int userId, UserAdditionalDataDTO additionalData)
-    {
-        if (additionalData == null)
-        {
-            throw new ArgumentException("Dados adicionais são obrigatórios.");
-        }
-
-        // Encontra o usuário pelo ID
-        var userAdditionalDataDb = await _dbContext.Users.FirstOrDefaultAsync(u => u.IdUser == userId);
-
-        if (userAdditionalDataDb == null)
-        {
-            throw new Exception("Usuário não encontrado.");
-        }
-
-        // Cria os dados adicionais
-        var userAdditionalData = new UserAdditionalData
-        {
-            DsCPF = additionalData.DsCPF,
-            DsPhone = additionalData.DsPhone,
-            DtBirthDate = additionalData.DtBirthDate,
-            DtUpdatedAt = DateTime.Now,
-            IdUser = userAdditionalDataDb.IdUser, // Associa o usuário aos dados adicionais
-        };
-
-        // Salva os dados adicionais no banco de dados
-        var response = await _userAdditionalDataRepository.AddUserAdditionalDataAsync(userAdditionalData);
-
-        return response;
-    }
-
-    /// <summary>
-    /// Metodo para adicionar o endereço nos dados adicionais
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="addressDTO"></param>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
-    public async Task<string> AddAddress(int userId, AddressDTO addressDTO)
-    {
-        var user = await _dbContext.Users
-            .Include(u => u.Address) // Se você deseja carregar o endereço atual
-            .FirstOrDefaultAsync(u => u.IdUser == userId);
-
-        if (user == null)
-        {
-            throw new Exception("Usuário não encontrado.");
-        }
-
-        var address = new Address
-        {
-            DsStreet = addressDTO.DsStreet,
-            DsNumber = addressDTO.DsNumber,
-            DsComplement = addressDTO.DsComplement,
-            DsNeighborhood = addressDTO.DsNeighborhood,
-            DsCity = addressDTO.DsCity,
-            DsState = addressDTO.DsState,
-            DsZipCode = addressDTO.DsZipCode,
-            IdUser = user.IdUser
-        };
-
-        var response = await _addressRepository.AddAddressAsync(address);
-
-        return response;
-    }
-
-    /// <summary>
     /// Método para autenticar um usuário
     /// </summary>
     /// <param name="request"></param>
@@ -216,14 +138,15 @@ public class AuthService : IAuthService
     /// <summary>
     /// Método para atualizar um usuário pelo e-mail
     /// </summary>
-    /// <param name="oldEmail"></param>
+    /// <param name="userId"></param>
     /// <param name="request"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<string> UpdateUserByEmailAsync(string oldEmail, UserUpdateDTO request)
+    public async Task<string> UpdateUserByIdAsync(int userId, UserUpdateDTO request)
     {
         // Busca o usuário no banco de dados
-        var userDb = await _dbContext.Users.FirstOrDefaultAsync(r => r.DsEmail == oldEmail && r.DtDeletedAt == null)
+        var userDb = await _dbContext.Users.
+            FirstOrDefaultAsync(r => r.IdUser == userId && r.DtDeletedAt == null)
             ?? throw new Exception("Usuário não encontrado");
 
         // Prepara os argumentos para atualizar o usuário no Firebase
@@ -233,9 +156,6 @@ public class AuthService : IAuthService
             Email = request.DsEmail,
             Password = request.DsPassword != null ? BCrypt.Net.BCrypt.HashPassword(request.DsPassword) : null,
         };
-
-        // Atualiza o usuário no Firebase
-        await FirebaseAuth.DefaultInstance.UpdateUserAsync(userArgs);
 
         // Atualiza o usuário no banco de dados
         if (request.DsEmail != null)
@@ -250,9 +170,19 @@ public class AuthService : IAuthService
 
         userDb.DtUpdatedAt = DateTime.Now;
 
-        await _dbContext.SaveChangesAsync();
+        try
+        {
+            // Atualiza o usuário no Firebase
+            await FirebaseAuth.DefaultInstance.UpdateUserAsync(userArgs);
 
-        return "Usuário atualizado com sucesso!";
+            await _dbContext.SaveChangesAsync();
+
+            return "Usuário atualizado com sucesso!";
+        }
+        catch (Exception ex)
+        {
+            return ex.Message;
+        }
     }
 
     /// <summary>
