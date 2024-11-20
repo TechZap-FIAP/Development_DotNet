@@ -40,6 +40,5 @@ public class WindTurbine
     /// <summary>
     /// Tipo da Turbina Eólica
     /// </summary>
-    [ForeignKey("ID_WIND_TURBINE_TYPE")]
     public WindTurbineType? WindTurbineType { get; set; }
 }

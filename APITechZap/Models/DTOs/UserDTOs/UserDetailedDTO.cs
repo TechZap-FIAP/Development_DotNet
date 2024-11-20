@@ -1,4 +1,7 @@
-﻿namespace APITechZap.Models.DTOs;
+﻿using APITechZap.Models.DTOs.AddressDTOs;
+using APITechZap.Models.DTOs.UserAdditionalDataDTOs;
+
+namespace APITechZap.Models.DTOs.UserDTOs;
 
 /// <summary>
 /// User Detailed DTO

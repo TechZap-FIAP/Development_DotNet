@@ -1,4 +1,4 @@
-﻿namespace APITechZap.Models.DTOs;
+﻿namespace APITechZap.Models.DTOs.UserDTOs;
 
 /// <summary>
 /// DTO para Atualização de Usuário
@@ -24,9 +24,4 @@ public class UserUpdateDTO
     /// Senha do Usuário
     /// </summary>
     public string? DsPassword { get; set; }
-
-    /// <summary>
-    /// Dados Adicionais do Usuário
-    /// </summary>
-    public UserAdditionalData? UserAdditionalData { get; set; }
 }

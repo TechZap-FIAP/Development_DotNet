@@ -1,4 +1,4 @@
-﻿namespace APITechZap.Models.DTOs;
+﻿namespace APITechZap.Models.DTOs.UserDTOs;
 
 /// <summary>
 /// DTO para registro de Usuário

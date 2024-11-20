@@ -23,19 +23,19 @@ public class SolarPanel
     /// Tamanho do painel solar
     /// </summary>
     [Column("DS_SIZE")]
-    public double DsSize { get; set; }
+    public double? DsSize { get; set; }
 
     /// <summary>
     /// Material do painel solar
     /// </summary>
     [Column("DS_MATERIAL")]
-    public string DsMaterial { get; set; }
+    public string? DsMaterial { get; set; }
 
     /// <summary>
     /// Preço do painel solar
     /// </summary>
     [Column("DS_PRICE")]
-    public double DsPrice { get; set; }
+    public double? DsPrice { get; set; }
 
     /// <summary>
     /// Tipo do painel solar

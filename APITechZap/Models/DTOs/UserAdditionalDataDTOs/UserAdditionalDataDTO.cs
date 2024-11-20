@@ -1,4 +1,4 @@
-﻿namespace APITechZap.Models.DTOs;
+﻿namespace APITechZap.Models.DTOs.UserAdditionalDataDTOs;
 
 /// <summary>
 /// UserAdditionalDataDTO class is used to store the additional data of the user.

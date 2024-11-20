@@ -1,9 +1,9 @@
-﻿namespace APITechZap.Models.DTOs;
+﻿namespace APITechZap.Models.DTOs.AddressDTOs;
 
 /// <summary>
-/// Address DTO
+/// Address Update DTO
 /// </summary>
-public class AddressDTO
+public class AddressUpdateDTO
 {
     /// <summary>
     /// Street of Address

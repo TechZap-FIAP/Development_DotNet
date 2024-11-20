@@ -1,4 +1,4 @@
-﻿namespace APITechZap.Models.DTOs;
+﻿namespace APITechZap.Models.DTOs.SolarPanelDTOs;
 
 /// <summary>
 /// DTO para os tipos de painel solar

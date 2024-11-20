@@ -1,4 +1,4 @@
-﻿namespace APITechZap.Models.DTOs;
+﻿namespace APITechZap.Models.DTOs.WindTurbineDTOs;
 
 /// <summary>
 /// DTO de Turbina Eólica

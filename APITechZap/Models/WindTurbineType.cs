@@ -23,25 +23,25 @@ public class WindTurbineType
     /// Voltagem da Turbina Eólica
     /// </summary>
     [Column("DS_VOLTAGE")]
-    public string DsVoltage { get; set; }
+    public string? DsVoltage { get; set; }
 
     /// <summary>
     /// Modelo da Turbina Eólica
     /// </summary>
     [Column("DS_MODEL")]
-    public string DsModel { get; set; }
+    public string? DsModel { get; set; }
 
     /// <summary>
     /// Fabricante da Turbina Eólica
     /// </summary>
     [Column("DS_MANUFACTURER")]
-    public string DsManufacturer { get; set; }
+    public string? DsManufacturer { get; set; }
 
     /// <summary>
     /// Tipo de Gerador da Turbina Eólica
     /// </summary>
     [Column("DS_GENERATOR_TYPE")]
-    public string DsGeneratorType { get; set; }
+    public string? DsGeneratorType { get; set; }
 
     /// <summary>
     /// Garantia da Turbina Eólica em Anos
