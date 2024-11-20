@@ -109,7 +109,7 @@ public class AuthService : IAuthService
     /// <exception cref="Exception"></exception>
     public async Task<string> LoginAsync(UserLoginDTO request)
     {
-        if (request == null || string.IsNullOrEmpty(request.DsEmail) || string.IsNullOrEmpty(request.DsPassword))
+        if (string.IsNullOrEmpty(request.DsEmail) || string.IsNullOrEmpty(request.DsPassword))
         {
             throw new ArgumentException("E-mail e senha são obrigatórios.");
         }
