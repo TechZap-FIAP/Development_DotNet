@@ -9,6 +9,7 @@ namespace APITechZap.Controllers;
 /// </summary>
 [Route("api/solar-panel")]
 [ApiController]
+[Tags("Produtos - Painel Solar")]
 public class SolarPanelController : ControllerBase
 {
 

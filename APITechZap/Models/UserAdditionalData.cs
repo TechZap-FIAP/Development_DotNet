@@ -41,7 +41,7 @@ public class UserAdditionalData
     public string? DsPhone { get; set; }
 
     /// <summary>
-    /// Data de Criação do Usuário
+    /// Data de Criação
     /// </summary>
     [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy - hh:mm:ss}", ApplyFormatInEditMode = true)]
     [Column("DT_CREATED_AT")]
@@ -49,12 +49,20 @@ public class UserAdditionalData
     public DateTime DtCreatedAt { get; set; } = DateTime.Now;
 
     /// <summary>
-    /// Data de Atualização do Usuário
+    /// Data de Atualização
     /// </summary>
     [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy - hh:mm:ss}", ApplyFormatInEditMode = true)]
     [Column("DT_UPDATED_AT")]
     [JsonIgnore]
     public DateTime? DtUpdatedAt { get; set; }
+
+    /// <summary>
+    /// Data de Exclusão
+    /// </summary>
+    [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy - hh:mm:ss}", ApplyFormatInEditMode = true)]
+    [Column("DT_DELETED_AT")]
+    [JsonIgnore]
+    public DateTime? DtDeletedAt { get; set; }
 
     /// <summary>
     /// Identificador do Usuário

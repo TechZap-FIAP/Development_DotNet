@@ -10,6 +10,7 @@ namespace APITechZap.Controllers;
 /// </summary>
 [Route("api/address")]
 [ApiController]
+[Tags("Usuário - Endereço")]
 public class AddressController : ControllerBase
 {
     private readonly IAddressRepository _addressRepository;

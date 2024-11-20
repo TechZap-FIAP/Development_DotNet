@@ -38,7 +38,7 @@ public class UserAdditionalDataRepository : IUserAdditionalDataRepository
         }
 
         // Encontra o usuário pelo ID
-        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.IdUser == userId) ?? throw new Exception("Usuário não encontrado."); ;
+        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.IdUser == userId && u.DtDeletedAt == null) ?? throw new Exception("Usuário não encontrado."); ;
 
         bool cpfExists = await _dbContext.UserAdditionalDatas.AnyAsync(u => u.DsCPF == request.DsCPF);
 
@@ -79,11 +79,11 @@ public class UserAdditionalDataRepository : IUserAdditionalDataRepository
     {
         var user = await _dbContext.Users
             .Include(u => u.UserAdditionalData)
-            .FirstOrDefaultAsync(u => u.IdUser == userId) 
+            .FirstOrDefaultAsync(u => u.IdUser == userId && u.DtDeletedAt == null) 
             ?? throw new Exception("Usuário não encontrado.");
 
         var userAdditionalData = await _dbContext.UserAdditionalDatas
-            .FirstOrDefaultAsync(u => u.IdUser == userId) 
+            .FirstOrDefaultAsync(u => u.IdUser == userId && u.DtDeletedAt == null) 
             ?? throw new Exception("Dados Adicionais não encontrados!");
 
         bool cpfExists = await _dbContext.UserAdditionalDatas
@@ -130,7 +130,7 @@ public class UserAdditionalDataRepository : IUserAdditionalDataRepository
     /// <exception cref="Exception"></exception>
     public async Task<UserAdditionalData> GetUserAdditionalDataByUserIdAsync(int userId)
     {
-        var userAdditionalData = await _dbContext.UserAdditionalDatas.FirstOrDefaultAsync(uda => uda.IdUser == userId) ?? throw new Exception("Dados Adicionais não encontrados!");
+        var userAdditionalData = await _dbContext.UserAdditionalDatas.FirstOrDefaultAsync(uda => uda.IdUser == userId && uda.DtDeletedAt == null) ?? throw new Exception("Dados Adicionais não encontrados!");
 
         return userAdditionalData;
     }

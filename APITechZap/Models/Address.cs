@@ -78,6 +78,14 @@ public class Address
     public DateTime? DtUpdatedAt { get; set; }
 
     /// <summary>
+    /// Data de Exclusão
+    /// </summary>
+    [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy - hh:mm:ss}", ApplyFormatInEditMode = true)]
+    [Column("DT_DELETED_AT")]
+    [JsonIgnore]
+    public DateTime? DtDeletedAt { get; set; }
+
+    /// <summary>
     /// Identificador do Usuário
     /// </summary>
     [ForeignKey("User")]

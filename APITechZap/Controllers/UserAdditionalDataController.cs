@@ -11,6 +11,7 @@ namespace APITechZap.Controllers;
 /// </summary>
 [Route("api/user-additional-data")]
 [ApiController]
+[Tags("Usuário - Dados Adicionais")]
 public class UserAdditionalDataController : ControllerBase
 {
     private readonly IUserAdditionalDataRepository _userAdditionalDataRepository;

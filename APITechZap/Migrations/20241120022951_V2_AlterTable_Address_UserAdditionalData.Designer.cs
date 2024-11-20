@@ -3,6 +3,7 @@ using System;
 using APITechZap.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Oracle.EntityFrameworkCore.Metadata;
 
@@ -11,9 +12,11 @@ using Oracle.EntityFrameworkCore.Metadata;
 namespace APITechZap.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241120022951_V2_AlterTable_Address_UserAdditionalData")]
+    partial class V2_AlterTable_Address_UserAdditionalData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,9 +66,9 @@ namespace APITechZap.Migrations
                         .HasColumnType("TIMESTAMP(7)")
                         .HasColumnName("DT_CREATED_AT");
 
-                    b.Property<DateTime?>("DtDeletedAt")
+                    b.Property<DateTime?>("DtFinishedAt")
                         .HasColumnType("TIMESTAMP(7)")
-                        .HasColumnName("DT_DELETED_AT");
+                        .HasColumnName("DT_FINISHED_AT");
 
                     b.Property<DateTime?>("DtUpdatedAt")
                         .HasColumnType("TIMESTAMP(7)")
@@ -274,9 +277,9 @@ namespace APITechZap.Migrations
                         .HasColumnType("TIMESTAMP(7)")
                         .HasColumnName("DT_CREATED_AT");
 
-                    b.Property<DateTime?>("DtDeletedAt")
+                    b.Property<DateTime?>("DtFinishedAt")
                         .HasColumnType("TIMESTAMP(7)")
-                        .HasColumnName("DT_DELETED_AT");
+                        .HasColumnName("DT_FINISHED_AT");
 
                     b.Property<DateTime?>("DtUpdatedAt")
                         .HasColumnType("TIMESTAMP(7)")

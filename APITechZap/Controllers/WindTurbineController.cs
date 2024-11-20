@@ -9,6 +9,7 @@ namespace APITechZap.Controllers;
 /// </summary>
 [Route("api/wind-turbine")]
 [ApiController]
+[Tags("Produtos - Turbina Eólica")]
 public class WindTurbineController : ControllerBase
 {
     private readonly IWindTurbineRepository _windTurbineRepository;

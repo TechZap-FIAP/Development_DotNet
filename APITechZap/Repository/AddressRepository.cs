@@ -33,7 +33,7 @@ public class AddressRepository : IAddressRepository
     {
         var user = await _dbContext.Users
             .Include(a => a.Address) // Se você deseja carregar o endereço atual
-            .FirstOrDefaultAsync(a => a.IdUser == userId) 
+            .FirstOrDefaultAsync(a => a.IdUser == userId && a.DtDeletedAt == null) 
             ?? throw new Exception("Usuário não encontrado.");
 
         var address = new Address
@@ -71,11 +71,11 @@ public class AddressRepository : IAddressRepository
     {
         var user = await _dbContext.Users
             .Include(a => a.Address)
-            .FirstOrDefaultAsync(a => a.IdUser == userId) 
+            .FirstOrDefaultAsync(a => a.IdUser == userId && a.DtDeletedAt == null) 
             ?? throw new Exception("Usuário não encontrado.");
 
         var address = await _dbContext.Addresses.
-            FirstOrDefaultAsync(a => a.IdUser == userId) 
+            FirstOrDefaultAsync(a => a.IdUser == userId && a.DtDeletedAt == null) 
             ?? throw new Exception("Endereço não encontrado!");
 
         if (request.DsStreet != null)
@@ -135,7 +135,7 @@ public class AddressRepository : IAddressRepository
     /// <exception cref="Exception"></exception>
     public async Task<Address> GetAddressByUserIdAsync(int userId)
     {
-        var address = await _dbContext.Addresses.FirstOrDefaultAsync(a => a.IdUser == userId) ?? throw new Exception("Endereço não encontrado!");
+        var address = await _dbContext.Addresses.FirstOrDefaultAsync(a => a.IdUser == userId && a.DtDeletedAt == null) ?? throw new Exception("Endereço não encontrado!");
 
         return address;
     }

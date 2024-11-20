@@ -17,6 +17,7 @@ namespace APITechZap.Controllers;
 /// </summary>
 [Route("api/user")]
 [ApiController]
+[Tags("Usuário")]
 public class UsersController : ControllerBase
 {
     private readonly IUserRepository _userRepository;

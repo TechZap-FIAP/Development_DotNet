@@ -194,6 +194,9 @@ public class AuthService : IAuthService
     public async Task<string> DeleteUserAsync(int userId)
     {
         var userDb = await _dbContext.Users.FirstOrDefaultAsync(r => r.IdUser == userId);
+        var userAdditionalData = await _dbContext.UserAdditionalDatas.FirstOrDefaultAsync(r => r.IdUser == userId);
+        var address = await _dbContext.Addresses.FirstOrDefaultAsync(r => r.IdUser == userId);
+
         if (userDb != null)
         {
             var uidFirebase = userDb.DsUidFirebase;
@@ -205,20 +208,55 @@ public class AuthService : IAuthService
 
             userDb.DtDeletedAt = DateTime.Now;
 
-            await _dbContext.SaveChangesAsync();
-
             var userArgs = new UserRecordArgs
             {
                 Uid = uidFirebase,
                 Disabled = true,
             };
 
-            await FirebaseAuth.DefaultInstance.UpdateUserAsync(userArgs);
+            try
+            {
+                await _dbContext.SaveChangesAsync();
 
-            return "Usuário desativado com sucesso";
+                await FirebaseAuth.DefaultInstance.UpdateUserAsync(userArgs);
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
-        throw new Exception("Usuário não encontrado.");
+
+        if (userAdditionalData != null)
+        {
+            userAdditionalData.DtDeletedAt = DateTime.Now;
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        if (address != null)
+        {
+            address.DtDeletedAt = DateTime.Now;
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        return "Usuário deletado com sucesso";
     }
+
 
     /// <summary>
     /// Método para reativar um usuário
@@ -229,6 +267,9 @@ public class AuthService : IAuthService
     public async Task<string> ReactiveUserAsync(int userId)
     {
         var userDb = await _dbContext.Users.FirstOrDefaultAsync(r => r.IdUser == userId && r.DtDeletedAt != null);
+        var userAdditionalData = await _dbContext.UserAdditionalDatas.FirstOrDefaultAsync(u => u.IdUser == userId && u.DtDeletedAt != null);
+        var address = await _dbContext.Addresses.FirstOrDefaultAsync(u => u.IdUser == userId && u.DtDeletedAt != null);
+
         if (userDb != null)
         {
             var uidFirebase = userDb.DsUidFirebase;
@@ -237,9 +278,6 @@ public class AuthService : IAuthService
             {
                 throw new Exception("UID do Firebase não encontrado.");
             }
-            userDb.DtDeletedAt = null;
-
-            await _dbContext.SaveChangesAsync();
 
             var userArgs = new UserRecordArgs
             {
@@ -247,11 +285,49 @@ public class AuthService : IAuthService
                 Disabled = false,
             };
 
-            await FirebaseAuth.DefaultInstance.UpdateUserAsync(userArgs);
+            userDb.DtDeletedAt = null;
 
-            return "Usuário reativado com sucesso";
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+
+                await FirebaseAuth.DefaultInstance.UpdateUserAsync(userArgs);
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
-        throw new Exception("Usuário não encontrado.");
+
+        if(userAdditionalData != null)
+        {
+            userAdditionalData.DtDeletedAt = null;
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        if (address != null)
+        {
+            address.DtDeletedAt = null;
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        return "Usuário reativado com sucesso";
     }
 
     /// <summary>
