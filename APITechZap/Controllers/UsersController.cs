@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using APITechZap.Models;
-using APITechZap.Models.DTOs;
 using APITechZap.Repository;
 using APITechZap.Services.Authentication;
 using APITechZap.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
+using APITechZap.Models.DTOs.AddressDTOs;
+using APITechZap.Models.DTOs.UserAdditionalDataDTOs;
+using APITechZap.Models.DTOs.UserDTOs;
 
 namespace APITechZap.Controllers;
 
@@ -104,61 +106,21 @@ public class UsersController : ControllerBase
     }
 
     /// <summary>
-    /// Add additional data to a user
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="additionalData"></param>
-    /// <returns></returns>
-    [HttpPost("user-additional-data/{userId}")]
-    public async Task<IActionResult> AddUserAdditionalData(int userId, [FromBody] UserAdditionalDataDTO additionalData)
-    {
-        try
-        {
-            var result = await _authService.AddUserAdditionalDataAsync(userId, additionalData);
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
-    /// <summary>
-    /// Add address data to a user
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="address"></param>
-    /// <returns></returns>
-    [HttpPost("add-address/{userId}")]
-    public async Task<IActionResult> AddAddress(int userId, [FromBody] AddressDTO address)
-    {
-        try
-        {
-            var result = await _authService.AddAddress(userId, address);
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
-    /// <summary>
     /// Update a request
     /// </summary>
-    /// <param name="email"></param>
+    /// <param name="userId"></param>
     /// <param name="request"></param>
     /// <returns></returns>
     /// <response code="200">Usuário atualizado com sucesso.</response>
     /// <response code="400">Erro ao atualizar usuário.</response>
     /// <response code="404">Usuário não encontrado.</response>
     /// <response code="500">Erro ao atualizar usuário.</response>
-    [HttpPut("update/{email}")]
-    public async Task<IActionResult> UpdateUser(string email, [FromBody] UserUpdateDTO request)
+    [HttpPut("update/{userId}")]
+    public async Task<IActionResult> UpdateUser(int userId, [FromBody] UserUpdateDTO request)
     {
         try
         {
-            var result = await _authService.UpdateUserByEmailAsync(email, request);
+            var result = await _authService.UpdateUserByIdAsync(userId, request);
             return Ok(result); // Return success message
         }
         catch (Exception ex)
