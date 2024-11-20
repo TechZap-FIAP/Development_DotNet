@@ -1,6 +1,8 @@
 ﻿using APITechZap.Data;
 using APITechZap.Models;
-using APITechZap.Models.DTOs;
+using APITechZap.Models.DTOs.AddressDTOs;
+using APITechZap.Models.DTOs.UserAdditionalDataDTOs;
+using APITechZap.Models.DTOs.UserDTOs;
 using APITechZap.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 

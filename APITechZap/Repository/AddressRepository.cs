@@ -1,5 +1,6 @@
 ﻿using APITechZap.Data;
 using APITechZap.Models;
+using APITechZap.Models.DTOs.AddressDTOs;
 using APITechZap.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,41 +23,119 @@ public class AddressRepository : IAddressRepository
     }
 
     /// <summary>
-    /// Método para adicionar o endereço
+    /// Método para adicionar o Endereço nos Dados Adicionais
     /// </summary>
-    /// <param name="address"></param>
+    /// <param name="userId"></param>
+    /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<string> AddAddressAsync(Address address)
+    /// <exception cref="Exception"></exception>
+    public async Task<string> AddAddressAsync(int userId, AddressDTO request)
     {
-        await _dbContext.Addresses.AddAsync(address);
-        await _dbContext.SaveChangesAsync();
+        var user = await _dbContext.Users
+            .Include(a => a.Address) // Se você deseja carregar o endereço atual
+            .FirstOrDefaultAsync(a => a.IdUser == userId) 
+            ?? throw new Exception("Usuário não encontrado.");
 
-        return "Endereço Adicionado com Sucesso";
+        var address = new Address
+        {
+            DsStreet = request.DsStreet,
+            DsNumber = request.DsNumber,
+            DsComplement = request.DsComplement,
+            DsNeighborhood = request.DsNeighborhood,
+            DsCity = request.DsCity,
+            DsState = request.DsState,
+            DsZipCode = request.DsZipCode,
+            IdUser = user.IdUser
+        };
+
+        try
+        {
+            await _dbContext.Addresses.AddAsync(address);
+            await _dbContext.SaveChangesAsync();
+
+            return "Endereço Adicionado com Sucesso";
+        }
+        catch (Exception ex)
+        {
+            return ex.Message;
+        }
     }
 
     /// <summary>
     /// Método para atualizar o endereço
     /// </summary>
-    /// <param name="address"></param>
+    /// <param name="request"></param>
+    /// <param name="userId"></param>
     /// <returns></returns>
-    public async Task<string> UpdateAddressAsync(Address address)
+    public async Task<string> UpdateAddressAsync(int userId, AddressUpdateDTO request)
     {
-        _dbContext.Addresses.Update(address);
-        await _dbContext.SaveChangesAsync();
+        var user = await _dbContext.Users
+            .Include(a => a.Address)
+            .FirstOrDefaultAsync(a => a.IdUser == userId) 
+            ?? throw new Exception("Usuário não encontrado.");
 
-        return "Endereço Atualizado com Sucesso";
+        var address = await _dbContext.Addresses.
+            FirstOrDefaultAsync(a => a.IdUser == userId) 
+            ?? throw new Exception("Endereço não encontrado!");
+
+        if (request.DsStreet != null)
+        {
+            address.DsStreet = request.DsStreet;
+        }
+
+        if (request.DsNumber != null)
+        {
+            address.DsNumber = request.DsNumber;
+        }
+
+        if (request.DsComplement != null)
+        {
+            address.DsComplement = request.DsComplement;
+        }
+
+        if (request.DsNeighborhood != null)
+        {
+            address.DsNeighborhood = request.DsNeighborhood;
+        }
+
+        if (request.DsCity != null)
+        {
+            address.DsCity = request.DsCity;
+        }
+
+        if (request.DsState != null)
+        {
+            address.DsState = request.DsState;
+        }
+
+        if (request.DsZipCode != null)
+        {
+            address.DsZipCode = request.DsZipCode;
+        }
+
+        address.DtUpdatedAt = DateTime.Now;
+
+        try
+        {
+            await _dbContext.SaveChangesAsync();
+
+            return "Endereço Atualizado com Sucesso";
+        }
+        catch (Exception ex)
+        {
+            return ex.Message;
+        }
     }
 
     /// <summary>
     /// Método para buscar o endereço pelo Id do Usuário
     /// </summary>
-    /// <param name="UserId"></param>
+    /// <param name="userId"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<Address> GetAddressByUserIdAsync(int UserId)
+    public async Task<Address> GetAddressByUserIdAsync(int userId)
     {
-
-        var address = await _dbContext.Addresses.FirstOrDefaultAsync(a => a.IdUser == UserId) ?? throw new Exception("Endereço não encontrado!");
+        var address = await _dbContext.Addresses.FirstOrDefaultAsync(a => a.IdUser == userId) ?? throw new Exception("Endereço não encontrado!");
 
         return address;
     }

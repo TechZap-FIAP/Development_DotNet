@@ -1,11 +1,13 @@
 using APITechZap.Data;
 using APITechZap.Repository;
 using APITechZap.Repository.Interface;
+using APITechZap.Services.ArtificialIntelligence;
 using APITechZap.Services.Authentication;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Net.Http.Headers;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,15 +29,25 @@ builder.Services.AddHttpClient<IAuthService, AuthService>((sp, httpClient) =>
     httpClient.BaseAddress = new Uri(configuration["Authentication:TokenUri"]!);
 });
 
+builder.Services.AddHttpClient<IAiService, AiService>((sp, httpClient) =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+
+    var aiServiceUri = configuration["AiService:Uri"]! ?? throw new Exception("AI Service URI não está configurado");
+    httpClient.BaseAddress = new Uri(aiServiceUri);
+
+    var apiKey = configuration["AiService:ApiKey"]! ?? throw new Exception("API Key da AI Service não está configurado");
+    var response = httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+    Console.WriteLine(response);
+});
+
 // Add Scoped Tables
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserAdditionalDataRepository, UserAdditionalDataRepository>();
 builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IContractedPlanRepository, ContractedPlanRepository>();
 builder.Services.AddScoped<ISolarPanelRepository, SolarPanelRepository>();
-builder.Services.AddScoped<ISolarPanelTypeRepository, SolarPanelTypeRepository>();
 builder.Services.AddScoped<IWindTurbineRepository, WindTurbineRepository>();
-builder.Services.AddScoped<IWindTurbineTypeRepository, WindTurbineTypeRepository>();
 
 
 builder.Services.AddControllers();
@@ -51,8 +63,7 @@ builder.Services.AddSwaggerGen(options =>
         Contact = new OpenApiContact
         {
             Name = "TechZap",
-            Email = "technosfiap@gmail.com",
-            Url = new Uri("https://pormar.firebaseapp.com")
+            Email = "technosfiap@gmail.com"
         }
     });
 

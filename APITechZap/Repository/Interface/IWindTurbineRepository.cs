@@ -1,12 +1,10 @@
 ﻿using APITechZap.Models;
+using APITechZap.Models.DTOs.WindTurbineDTOs;
 
 namespace APITechZap.Repository.Interface;
 
 public interface IWindTurbineRepository
 {
-    Task<IEnumerable<WindTurbine>> GetAllWindTurbinesAsync();
-    Task<WindTurbine> GetWindTurbineByIdAsync(int id);
-    Task <string> AddWindTurbineAsync(WindTurbine windTurbine);
-    Task <string> UpdateWindTurbineAsync(WindTurbine windTurbine);
-    Task <string> DeleteWindTurbineAsync(int id);
+    Task<IEnumerable<WindTurbineDTO>> GetAllWindTurbinesAsync();
+    Task<WindTurbineDTO> GetWindTurbineByIdAsync(int id);
 }

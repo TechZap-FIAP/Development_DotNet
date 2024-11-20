@@ -1,5 +1,5 @@
 ﻿using APITechZap.Models;
-using APITechZap.Models.DTOs;
+using APITechZap.Models.DTOs.UserDTOs;
 
 namespace APITechZap.Repository.Interface;
 
