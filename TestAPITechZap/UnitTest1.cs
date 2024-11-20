@@ -1,4 +1,4 @@
-namespace TestAPITechZap;
+namespace TestApiTechZap;
 
 public class UnitTest1
 {
