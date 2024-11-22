@@ -19,7 +19,7 @@ public class UserAdditionalDataController : ControllerBase
     /// <summary>
     /// Construtor da classe UserAdditionalDataController
     /// </summary>
-    /// <param name="userAdditionalDataRepository"></param>
+    /// <param name="userAdditionalDataRepository">Repositório dos dados adicionais dos usuários</param>
     public UserAdditionalDataController(IUserAdditionalDataRepository userAdditionalDataRepository)
     {
         _userAdditionalDataRepository = userAdditionalDataRepository;
@@ -28,8 +28,11 @@ public class UserAdditionalDataController : ControllerBase
     /// <summary>
     /// Método para buscar os dados adicionais de um usuário pelo ID
     /// </summary>
-    /// <param name="userId"></param>
+    /// <param name="userId">ID do usuário cujos dados adicionais serão buscados</param>
     /// <returns></returns>
+    /// <response code="200">Dados adicionais do usuário encontrados com sucesso.</response>
+    /// <response code="404">Dados adicionais do usuário não encontrados.</response>
+    /// <response code="500">Erro ao buscar dados adicionais do usuário.</response>
     [HttpGet("{userId}")]
     public async Task<IActionResult> GetUserAdditionalDataByUserId(int userId)
     {
@@ -47,9 +50,12 @@ public class UserAdditionalDataController : ControllerBase
     /// <summary>
     /// Método para adicionar os dados adicionais de um usuário
     /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="request"></param>
+    /// <param name="userId">ID do usuário ao qual os dados adicionais serão adicionados</param>
+    /// <param name="request">Dados adicionais a serem adicionados</param>
     /// <returns></returns>
+    /// <response code="200">Dados adicionais do usuário adicionados com sucesso.</response>
+    /// <response code="400">Dados inválidos para adicionar.</response>
+    /// <response code="500">Erro ao adicionar dados adicionais do usuário.</response>
     [HttpPost("{userId}")]
     public async Task<IActionResult> AddUserAdditionalDataByUserId(int userId, [FromBody] UserAdditionalDataDTO request)
     {
@@ -67,9 +73,12 @@ public class UserAdditionalDataController : ControllerBase
     /// <summary>
     /// Método para atualizar os dados adicionais de um usuário
     /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="request"></param>
+    /// <param name="userId">ID do usuário cujos dados adicionais serão atualizados</param>
+    /// <param name="request">Novos dados adicionais</param>
     /// <returns></returns>
+    /// <response code="200">Dados adicionais do usuário atualizados com sucesso.</response>
+    /// <response code="404">Dados adicionais do usuário não encontrados para atualização.</response>
+    /// <response code="500">Erro ao atualizar dados adicionais do usuário.</response>
     [HttpPut("{userId}")]
     public async Task<IActionResult> UpdateUserAdditionalDataByUserId(int userId, [FromBody] UserAdditionalDataUpdateDTO request)
     {

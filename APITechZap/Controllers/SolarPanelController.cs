@@ -21,7 +21,7 @@ public class SolarPanelController : ControllerBase
     /// <summary>
     /// Constructor for SolarPanelController
     /// </summary>
-    /// <param name="solarPanelRepository"></param>
+    /// <param name="solarPanelRepository">Repositório de painéis solares</param>
     public SolarPanelController(ISolarPanelRepository solarPanelRepository)
     {
         _solarPanelRepository = solarPanelRepository;
@@ -30,8 +30,10 @@ public class SolarPanelController : ControllerBase
     /// <summary>
     /// Adiciona o Painel Solar
     /// </summary>
-    /// <param name="request"></param>
+    /// <param name="request">Dados do painel solar a ser adicionado</param>
     /// <returns></returns>
+    /// <response code="200">Painel solar adicionado com sucesso.</response>
+    /// <response code="500">Erro ao adicionar painel solar.</response>
     [HttpPost]
     public async Task<IActionResult> AddSolarPanelAsync([FromBody] SolarPanelDTO request)
     {
@@ -49,9 +51,11 @@ public class SolarPanelController : ControllerBase
     /// <summary>
     /// Adiciona o Tipo do Painel Solar
     /// </summary>
-    /// <param name="solarPanelId"></param>
-    /// <param name="request"></param>
+    /// <param name="solarPanelId">ID do painel solar ao qual o tipo será adicionado</param>
+    /// <param name="request">Dados do tipo do painel solar a ser adicionado</param>
     /// <returns></returns>
+    /// <response code="200">Tipo de painel solar adicionado com sucesso.</response>
+    /// <response code="500">Erro ao adicionar tipo de painel solar.</response>
     [HttpPost("type/{solarPanelId}")]
     public async Task<IActionResult> AddSolarPanelTypesAsync(int solarPanelId, [FromBody] SolarPanelTypeDTO request)
     {
@@ -70,6 +74,8 @@ public class SolarPanelController : ControllerBase
     /// Get all Solar Panels
     /// </summary>
     /// <returns></returns>
+    /// <response code="200">Lista de painéis solares retornada com sucesso.</response>
+    /// <response code="500">Erro ao buscar lista de painéis solares.</response>
     [HttpGet]
     public async Task<IActionResult> GetAllSolarPanelsAsync()
     {
@@ -88,8 +94,11 @@ public class SolarPanelController : ControllerBase
     /// <summary>
     /// Get Solar Panel by Id
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">ID do painel solar a ser buscado</param>
     /// <returns></returns>
+    /// <response code="200">Painel solar encontrado com sucesso.</response>
+    /// <response code="404">Painel solar não encontrado.</response>
+    /// <response code="500">Erro ao buscar painel solar.</response>
     [HttpGet("{id}")]
     public async Task<IActionResult> GetSolarPanelByIdAsync(int id)
     {

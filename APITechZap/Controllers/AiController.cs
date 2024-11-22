@@ -18,7 +18,7 @@ public class AiController : ControllerBase
     /// <summary>
     /// Constructor for AiController
     /// </summary>
-    /// <param name="aiService"></param>
+    /// <param name="aiService">Serviço de IA</param>
     public AiController(IAiService aiService)
     {
         _aiService = aiService;
@@ -27,8 +27,11 @@ public class AiController : ControllerBase
     /// <summary>
     /// Suporte para ajuda ao usuário
     /// </summary>
-    /// <param name="input"></param>
+    /// <param name="input">Entrada de texto para a IA</param>
     /// <returns></returns>
+    /// <response code="200">Resposta gerada com sucesso.</response>
+    /// <response code="400">Entrada inválida.</response>
+    /// <response code="500">Erro ao processar a solicitação.</response>
     [HttpGet]
     public async Task<IActionResult> TriggerOpenAI([FromQuery] string input)
     {

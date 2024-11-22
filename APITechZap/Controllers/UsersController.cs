@@ -26,8 +26,8 @@ public class UsersController : ControllerBase
     /// <summary>
     /// Constructor for UsersController
     /// </summary>
-    /// <param name="userRepository"></param>
-    /// <param name="authService"></param>
+    /// <param name="userRepository">Repositório de usuários</param>
+    /// <param name="authService">Serviço de autenticação</param>
     public UsersController(IUserRepository userRepository, IAuthService authService)
     {
         _userRepository = userRepository;
@@ -37,8 +37,10 @@ public class UsersController : ControllerBase
     /// <summary>
     /// Login a request
     /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
+    /// <param name="request">Dados de login do usuário</param>
+    /// <returns>Token de autenticação</returns>
+    /// <response code="200">Login realizado com sucesso.</response>
+    /// <response code="401">Erro de autenticação.</response>
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] UserLoginDTO request)
     {
@@ -56,7 +58,9 @@ public class UsersController : ControllerBase
     /// <summary>
     /// Get all Users
     /// </summary>
-    /// <returns>Return all Users</returns>
+    /// <returns>Lista de todos os usuários</returns>
+    /// <response code="200">Usuários retornados com sucesso.</response>
+    /// <response code="500">Erro ao buscar usuários.</response>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<UserDetailedDTO>>> GetAllUsers()
     {
@@ -67,8 +71,10 @@ public class UsersController : ControllerBase
     /// <summary>
     /// Get a request by ID
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <param name="id">ID do usuário a ser buscado</param>
+    /// <returns>Detalhes do usuário</returns>
+    /// <response code="200">Usuário encontrado com sucesso.</response>
+    /// <response code="404">Usuário não encontrado.</response>
     [HttpGet("{id}")]
     public async Task<ActionResult<UserDetailedDTO>> GetUserById(int id)
     {
@@ -85,8 +91,11 @@ public class UsersController : ControllerBase
     /// <summary>
     /// Register a new request
     /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
+    /// <param name="request">Dados de registro do usuário</param>
+    /// <returns>Resultado do registro</returns>
+    /// <response code="200">Registro realizado com sucesso.</response>
+    /// <response code="400">E-mail já está em uso.</response>
+    /// <response code="500">Erro ao registrar usuário.</response>
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserRegisterDTO request)
     {
@@ -109,9 +118,9 @@ public class UsersController : ControllerBase
     /// <summary>
     /// Update a request
     /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="request"></param>
-    /// <returns></returns>
+    /// <param name="userId">ID do usuário a ser atualizado</param>
+    /// <param name="request">Novos dados do usuário</param>
+    /// <returns>Resultado da atualização</returns>
     /// <response code="200">Usuário atualizado com sucesso.</response>
     /// <response code="400">Erro ao atualizar usuário.</response>
     /// <response code="404">Usuário não encontrado.</response>
@@ -133,8 +142,8 @@ public class UsersController : ControllerBase
     /// <summary>
     /// Delete a request
     /// </summary>
-    /// <param name="userId"></param>
-    /// <returns></returns>
+    /// <param name="userId">ID do usuário a ser excluído</param>
+    /// <returns>Resultado da exclusão</returns>
     /// <response code="200">Usuário excluído com sucesso.</response>
     /// <response code="404">Usuário não encontrado.</response>
     /// <response code="500">Erro ao excluir usuário.</response>
@@ -155,8 +164,8 @@ public class UsersController : ControllerBase
     /// <summary>
     /// Reactivate a request
     /// </summary>
-    /// <param name="userId"></param>
-    /// <returns></returns>
+    /// <param name="userId">ID do usuário a ser reativado</param>
+    /// <returns>Resultado da reativação</returns>
     /// <response code="200">Usuário reativado com sucesso.</response>
     /// <response code="404">Usuário não encontrado.</response>
     /// <response code="500">Erro ao reativar usuário.</response>
@@ -179,7 +188,7 @@ public class UsersController : ControllerBase
     /// </summary>
     /// <param name="actualEmail">O E-mail do usuário a ser enviado o link de redefinição.</param>
     /// <returns>Uma mensagem de sucesso.</returns>
-    /// <response code="200">Link Enviado com sucesso.</response>
+    /// <response code="200">Link enviado com sucesso.</response>
     /// <response code="404">Usuário não encontrado.</response>
     /// <response code="500">Erro ao enviar e-mail de redefinição de senha.</response>
     [HttpPost("forgot-password/{actualEmail}")]

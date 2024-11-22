@@ -18,12 +18,19 @@ public class WindTurbineController : ControllerBase
     /// <summary>
     /// Constructor for WindTurbineController
     /// </summary>
-    /// <param name="windTurbineRepository"></param>
+    /// <param name="windTurbineRepository">Repositório de turbinas eólicas</param>
     public WindTurbineController(IWindTurbineRepository windTurbineRepository)
     {
         _windTurbineRepository = windTurbineRepository;
     }
 
+    /// <summary>
+    /// Adiciona uma nova turbina eólica
+    /// </summary>
+    /// <param name="request">Dados da turbina eólica a ser adicionada</param>
+    /// <returns>Resultado da operação de adição</returns>
+    /// <response code="200">Turbina eólica adicionada com sucesso.</response>
+    /// <response code="500">Erro ao adicionar turbina eólica.</response>
     [HttpPost]
     public async Task<IActionResult> AddWindTurbinesAsync([FromBody] WindTurbineDTO request)
     {
@@ -38,6 +45,14 @@ public class WindTurbineController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Adiciona um tipo de turbina eólica
+    /// </summary>
+    /// <param name="windTurbineId">ID da turbina eólica</param>
+    /// <param name="request">Dados do tipo de turbina a ser adicionado</param>
+    /// <returns>Resultado da operação de adição</returns>
+    /// <response code="200">Tipo de turbina eólica adicionado com sucesso.</response>
+    /// <response code="500">Erro ao adicionar tipo de turbina eólica.</response>
     [HttpPost("type/{windTurbineId}")]
     public async Task<IActionResult> AddWindTurbineTypesAsync(int windTurbineId, [FromBody] WindTurbineTypeDTO request)
     {
@@ -53,9 +68,11 @@ public class WindTurbineController : ControllerBase
     }
 
     /// <summary>
-    /// Get all Wind Turbines
+    /// Obtém todas as turbinas eólicas
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Lista de turbinas eólicas</returns>
+    /// <response code="200">Turbinas eólicas retornadas com sucesso.</response>
+    /// <response code="500">Erro ao buscar turbinas eólicas.</response>
     [HttpGet]
     public async Task<IActionResult> GetAllWindTurbinesAsync()
     {
@@ -72,10 +89,13 @@ public class WindTurbineController : ControllerBase
     }
 
     /// <summary>
-    /// Get Wind Turbine by Id
+    /// Obtém uma turbina eólica pelo ID
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <param name="id">ID da turbina eólica</param>
+    /// <returns>Detalhes da turbina eólica</returns>
+    /// <response code="200">Turbina eólica encontrada com sucesso.</response>
+    /// <response code="404">Turbina eólica não encontrada.</response>
+    /// <response code="500">Erro ao buscar turbina eólica.</response>
     [HttpGet("{id}")]
     public async Task<IActionResult> GetWindTurbineByIdAsync(int id)
     {
