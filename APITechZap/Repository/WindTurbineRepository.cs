@@ -103,11 +103,13 @@ public class WindTurbineRepository : IWindTurbineRepository
         {
             var windTurbineDTOs = windTurbines.Select(w => new WindTurbineDetailedDTO
             {
+                IdWindTurbine = w.IdWindTurbine,
                 DsMaterial = w.DsMaterial,
                 DsSize = w.DsSize,
                 DsPrice = w.DsPrice,
-                WindTurbineTypeDTO = w.WindTurbineType != null ? new WindTurbineTypeDTO
+                WindTurbineTypeDTO = w.WindTurbineType != null ? new WindTurbineTypeDetailedDTO
                 {
+                    IdWindTurbineType = w.WindTurbineType.IdWindTurbineType,
                     DsVoltage = w.WindTurbineType.DsVoltage,
                     DsModel = w.WindTurbineType.DsModel,
                     DsManufacturer = w.WindTurbineType.DsManufacturer,
@@ -142,11 +144,13 @@ public class WindTurbineRepository : IWindTurbineRepository
         {
             var windTurbineDTO = new WindTurbineDetailedDTO
             {
+                IdWindTurbine = id,
                 DsMaterial = windTurbine.DsMaterial,
                 DsSize = windTurbine.DsSize,
                 DsPrice = windTurbine.DsPrice,
-                WindTurbineTypeDTO = windTurbine.WindTurbineType != null ? new WindTurbineTypeDTO
+                WindTurbineTypeDTO = windTurbine.WindTurbineType != null ? new WindTurbineTypeDetailedDTO
                 {
+                    IdWindTurbineType = windTurbine.WindTurbineType.IdWindTurbineType,
                     DsVoltage = windTurbine.WindTurbineType.DsVoltage,
                     DsModel = windTurbine.WindTurbineType.DsModel,
                     DsManufacturer = windTurbine.WindTurbineType.DsManufacturer,

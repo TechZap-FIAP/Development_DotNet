@@ -6,6 +6,11 @@
 public class WindTurbineDetailedDTO
 {
     /// <summary>
+    /// Id da Turbina Eólica
+    /// </summary>
+    public int IdWindTurbine { get; set; }
+
+    /// <summary>
     /// Tamanho da Turbina Eólica
     /// </summary>
     public double? DsSize { get; set; }
@@ -23,5 +28,5 @@ public class WindTurbineDetailedDTO
     /// <summary>
     /// Tipo de Turbina Eólica
     /// </summary>
-    public WindTurbineTypeDTO? WindTurbineTypeDTO { get; set; }
+    public WindTurbineTypeDetailedDTO? WindTurbineTypeDTO { get; set; }
 }

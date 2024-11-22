@@ -41,6 +41,7 @@ public class AuthService : IAuthService
     /// <exception cref="Exception"></exception>
     public async Task<string> RegisterAsync(UserRegisterDTO request)
     {
+        // Verifica se o request é válido
         if (request == null || string.IsNullOrEmpty(request.DsEmail) || string.IsNullOrEmpty(request.DsPassword))
         {
             throw new ArgumentException("E-mail e senha são obrigatórios.");
@@ -67,18 +68,7 @@ public class AuthService : IAuthService
             await _dbContext.Users.AddAsync(newUser);
             await _dbContext.SaveChangesAsync();
 
-            // Commit da transação após salvar o usuário
-            await transaction.CommitAsync();
-        }
-        catch (Exception ex)
-        {
-            await transaction.RollbackAsync();
-            throw new Exception("Erro ao salvar usuário no banco de dados: " + ex.Message, ex);
-        }
-
-        // Registra no Firebase somente após a transação bem-sucedida
-        try
-        {
+            // Registra no Firebase somente após a transação bem-sucedida
             var userArgs = new UserRecordArgs
             {
                 Email = request.DsEmail,
@@ -86,17 +76,33 @@ public class AuthService : IAuthService
                 Disabled = false
             };
 
-            var newUserFb = await FirebaseAuth.DefaultInstance.CreateUserAsync(userArgs);
-            newUser.DsUidFirebase = newUserFb.Uid;
+            UserRecord newUserFb = null;
+            try
+            {
+                newUserFb = await FirebaseAuth.DefaultInstance.CreateUserAsync(userArgs);
+            }
+            catch (FirebaseAuthException ex)
+            {
+                // Se falhar ao criar usuário no Firebase, reverter as alterações no banco
+                await transaction.RollbackAsync();
+                throw new Exception("Erro ao criar usuário no Firebase: " + ex.Message, ex);
+            }
 
+            // Se a criação do usuário no Firebase for bem-sucedida, atualiza o banco de dados
+            newUser.DsUidFirebase = newUserFb.Uid;
             _dbContext.Users.Update(newUser);
             await _dbContext.SaveChangesAsync();
 
+            // Commit da transação após salvar o usuário no banco e no Firebase
+            await transaction.CommitAsync();
+
             return $"Usuário cadastrado com sucesso! \nID do usuário (BD): {newUser.IdUser}, UID (Firebase): {newUserFb.Uid}";
         }
-        catch (FirebaseAuthException ex)
+        catch (Exception ex)
         {
-            throw new Exception("Erro ao criar usuário no Firebase: " + ex.Message);
+            // Se ocorrer qualquer erro, reverter a transação
+            await transaction.RollbackAsync();
+            throw new Exception("Erro ao salvar usuário no banco de dados: " + ex.Message, ex);
         }
     }
 
@@ -111,7 +117,7 @@ public class AuthService : IAuthService
     {
         if (string.IsNullOrEmpty(request.DsEmail) || string.IsNullOrEmpty(request.DsPassword))
         {
-            throw new ArgumentException("E-mail e senha são obrigatórios.");
+            throw new ArgumentException("E-mail ou senha inválidos.");
         }
 
         var loginData = new
@@ -201,29 +207,42 @@ public class AuthService : IAuthService
         {
             var uidFirebase = userDb.DsUidFirebase;
 
-            if (string.IsNullOrEmpty(uidFirebase))
+            if (uidFirebase == null)
             {
-                throw new Exception("UID do Firebase não encontrado.");
+
+                userDb.DtDeletedAt = DateTime.Now;
+
+                try
+                {
+                    await _dbContext.SaveChangesAsync();
+                }
+                catch
+                {
+                    throw new Exception("ID do Usuário não encontrado.");
+                }
             }
 
-            userDb.DtDeletedAt = DateTime.Now;
-
-            var userArgs = new UserRecordArgs
+            if (uidFirebase != null)
             {
-                Uid = uidFirebase,
-                Disabled = true,
-            };
+                userDb.DtDeletedAt = DateTime.Now;
 
-            try
-            {
-                await _dbContext.SaveChangesAsync();
+                var userArgs = new UserRecordArgs
+                {
+                    Uid = uidFirebase,
+                    Disabled = true,
+                };
 
-                await FirebaseAuth.DefaultInstance.UpdateUserAsync(userArgs);
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+                try
+                {
+                    await _dbContext.SaveChangesAsync();
+
+                    await FirebaseAuth.DefaultInstance.UpdateUserAsync(userArgs);
+                }
+                catch (Exception ex)
+                {
+                    return ex.Message;
+                }
+            }            
         }
 
         if (userAdditionalData != null)
@@ -256,7 +275,6 @@ public class AuthService : IAuthService
 
         return "Usuário deletado com sucesso";
     }
-
 
     /// <summary>
     /// Método para reativar um usuário

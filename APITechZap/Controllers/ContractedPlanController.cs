@@ -1,5 +1,5 @@
 ﻿using APITechZap.Models;
-using APITechZap.Models.DTOs;
+using APITechZap.Models.DTOs.ContractedPlanDTOs;
 using APITechZap.Repository.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +34,7 @@ public class ContractedPlanController : ControllerBase
     /// <response code="200">Plano contratado adicionado com sucesso.</response>
     /// <response code="400">Erro ao adicionar plano contratado.</response>
     /// <response code="500">Erro interno ao processar a solicitação.</response>
-    [HttpPost("add-contracted-plan/{userId}")]
+    [HttpPost("{userId}")]
     public async Task<IActionResult> AddContractedPlan(int userId, [FromBody] ContractedPlanDTO planDto)
     {
         try
@@ -59,10 +59,10 @@ public class ContractedPlanController : ControllerBase
     /// </summary>
     /// <param name="userId">ID do usuário cujos planos serão retornados</param>
     /// <returns></returns>
-    /// <response code="200">Planos contratados retornados com sucesso.</response>
-    /// <response code="400">Erro ao buscar planos contratados.</response>
-    /// <response code="500">Erro interno ao processar a solicitação.</response>
-    [HttpGet("get-contracted-plan/{userId}")]
+    /// <response code="200">Planos encontrados com sucesso.</response>
+    /// <response code="400">Planos não encontrados</response>
+    /// <response code="500">Erro ao buscar os planos</response>
+    [HttpGet("{userId}")]
     public async Task<IActionResult> GetContractedPlan(int userId)
     {
         try
@@ -84,7 +84,7 @@ public class ContractedPlanController : ControllerBase
     /// <response code="200">Plano contratado removido com sucesso.</response>
     /// <response code="400">Erro ao remover plano contratado.</response>
     /// <response code="500">Erro interno ao processar a solicitação.</response>
-    [HttpDelete("del-contracted-plan/{planId}")]
+    [HttpDelete("{planId}")]
     public async Task<IActionResult> DeleteContractedPlan(int planId)
     {
         try

@@ -5,6 +5,7 @@
 /// </summary>
 public class SolarPanelDetailedDTO
 {
+    public int IdSolarPanel { get; set; }
     /// <summary>
     /// Tamanho do painel solar
     /// </summary>
@@ -23,5 +24,5 @@ public class SolarPanelDetailedDTO
     /// <summary>
     /// Tipo do Painel Solar
     /// </summary>
-    public SolarPanelTypeDTO? SolarPanelTypeDTO { get; set; }
+    public SolarPanelTypeDetailedDTO? SolarPanelTypeDTO { get; set; }
 }

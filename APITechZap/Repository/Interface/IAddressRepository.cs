@@ -30,5 +30,5 @@ public interface IAddressRepository
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task<Address> GetAddressByUserIdAsync(int id);
+    Task<AddressDetailedDTO> GetAddressByUserIdAsync(int id);
 }

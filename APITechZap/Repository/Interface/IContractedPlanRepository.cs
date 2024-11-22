@@ -1,5 +1,5 @@
 ﻿using APITechZap.Models;
-using APITechZap.Models.DTOs;
+using APITechZap.Models.DTOs.ContractedPlanDTOs;
 
 namespace APITechZap.Repository.Interface;
 
@@ -21,7 +21,7 @@ public interface IContractedPlanRepository
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
-    Task<IEnumerable<ContractedPlanDTO>> GetPlansByUserIdAsync(int userId);
+    Task<IEnumerable<ContractedPlanDetailedDTO>> GetPlansByUserIdAsync(int userId);
 
     /// <summary>
     /// Exclui um plano contratado pelo ID

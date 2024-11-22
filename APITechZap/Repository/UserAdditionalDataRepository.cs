@@ -128,10 +128,18 @@ public class UserAdditionalDataRepository : IUserAdditionalDataRepository
     /// <param name="userId"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<UserAdditionalData> GetUserAdditionalDataByUserIdAsync(int userId)
+    public async Task<UserAdditionalDataDetailedDTO> GetUserAdditionalDataByUserIdAsync(int userId)
     {
         var userAdditionalData = await _dbContext.UserAdditionalDatas.FirstOrDefaultAsync(uda => uda.IdUser == userId && uda.DtDeletedAt == null) ?? throw new Exception("Dados Adicionais não encontrados!");
 
-        return userAdditionalData;
+        var userAdditionalDataDTO = new UserAdditionalDataDetailedDTO
+        {
+            IdUserAdditionalData = userAdditionalData.IdUserAdditionalData,
+            DsCPF = userAdditionalData.DsCPF,
+            DsPhone = userAdditionalData.DsPhone,
+            DtBirthDate = userAdditionalData.DtBirthDate
+        };
+
+        return userAdditionalDataDTO;
     }
 }

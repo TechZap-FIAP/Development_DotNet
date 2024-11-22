@@ -1,4 +1,4 @@
-﻿namespace APITechZap.Models.DTOs;
+﻿namespace APITechZap.Models.DTOs.ContractedPlanDTOs;
 
 /// <summary>
 /// DTO para os planos contratados

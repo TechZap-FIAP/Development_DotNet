@@ -29,5 +29,5 @@ public interface IUserAdditionalDataRepository
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
-    Task<UserAdditionalData> GetUserAdditionalDataByUserIdAsync(int userId);
+    Task<UserAdditionalDataDetailedDTO> GetUserAdditionalDataByUserIdAsync(int userId);
 }

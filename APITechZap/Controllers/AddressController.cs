@@ -30,7 +30,7 @@ public class AddressController : ControllerBase
     /// <param name="userId">ID do usuário cujo endereço será buscado</param>
     /// <returns></returns>
     /// <response code="200">Endereço encontrado com sucesso.</response>
-    /// <response code="404">Endereço não encontrado.</response>
+    /// <response code="404">Usuário não encontrado.</response>
     /// <response code="500">Erro ao buscar endereço.</response>
     [HttpGet("{userId}")]
     public async Task<IActionResult> GetAddressByUserId(int userId)

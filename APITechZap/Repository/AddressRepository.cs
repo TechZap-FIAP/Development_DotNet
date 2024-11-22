@@ -133,12 +133,24 @@ public class AddressRepository : IAddressRepository
     /// <param name="userId"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<Address> GetAddressByUserIdAsync(int userId)
+    public async Task<AddressDetailedDTO> GetAddressByUserIdAsync(int userId)
     {
         var address = await _dbContext.Addresses
             .FirstOrDefaultAsync(a => a.IdUser == userId && a.DtDeletedAt == null) 
-            ?? throw new Exception("Endereço não encontrado!");
+            ?? throw new Exception("Usuário não encontrado!");
 
-        return address;
+        var addressDTO = new AddressDetailedDTO
+        {
+            IdAddress = address.IdAddress,
+            DsStreet = address.DsStreet,
+            DsNumber = address.DsNumber,
+            DsComplement = address.DsComplement,
+            DsNeighborhood = address.DsNeighborhood,
+            DsCity = address.DsCity,
+            DsState = address.DsState,
+            DsZipCode = address.DsZipCode
+        };
+
+        return addressDTO;
     }
 }

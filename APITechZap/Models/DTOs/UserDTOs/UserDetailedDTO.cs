@@ -1,4 +1,5 @@
 ﻿using APITechZap.Models.DTOs.AddressDTOs;
+using APITechZap.Models.DTOs.ContractedPlanDTOs;
 using APITechZap.Models.DTOs.UserAdditionalDataDTOs;
 
 namespace APITechZap.Models.DTOs.UserDTOs;
@@ -8,6 +9,11 @@ namespace APITechZap.Models.DTOs.UserDTOs;
 /// </summary>
 public class UserDetailedDTO
 {
+    /// <summary>
+    /// User Id
+    /// </summary>
+    public int IdUser { get; set; }
+
     /// <summary>
     /// Nome do Usuário
     /// </summary>
@@ -26,11 +32,11 @@ public class UserDetailedDTO
     /// <summary>
     /// Dados Adicionais do Usuário
     /// </summary>
-    public UserAdditionalDataDTO? UserAdditionalDataDTO { get; set; }
+    public UserAdditionalDataDetailedDTO? UserAdditionalDataDTO { get; set; }
 
     /// <summary>
     /// Endereço do Usuário
     /// </summary>
-    public AddressDTO? AddressDTO { get; set; }
+    public AddressDetailedDTO? AddressDTO { get; set; }
 
 }

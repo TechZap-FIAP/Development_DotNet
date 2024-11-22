@@ -1,6 +1,8 @@
 ﻿using APITechZap.Data;
 using APITechZap.Models;
-using APITechZap.Models.DTOs;
+using APITechZap.Models.DTOs.ContractedPlanDTOs;
+using APITechZap.Models.DTOs.SolarPanelDTOs;
+using APITechZap.Models.DTOs.WindTurbineDTOs;
 using APITechZap.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using System.Numerics;
@@ -70,21 +72,59 @@ public class ContractedPlanRepository : IContractedPlanRepository
     /// <param name="userId"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<IEnumerable<ContractedPlanDTO>> GetPlansByUserIdAsync(int userId)
+    public async Task<IEnumerable<ContractedPlanDetailedDTO>> GetPlansByUserIdAsync(int userId)
     {
         var plans = await _dbContext.ContractedPlans
         .Where(cp => cp.IdUser == userId && cp.DtDeletedAt == null)
-        .ToListAsync() ?? throw new Exception("Nenhum plano contratado encontrado!"); ;
+        .ToListAsync() ?? throw new Exception("Planos não encontrados!"); ;
 
 
-        // Mapeando os dados para DTOs
-        var planDTOs = plans.Select(plan => new ContractedPlanDTO
+        try
         {
-            IdSolarPanel = plan.IdSolarPanel,
-            IdWindTurbine = plan.IdWindTurbine,
-        });
+            // Mapeando os dados para DTOs
+            var planDTOs = plans.Select(plan => new ContractedPlanDetailedDTO
+            {
+                SolarPanel = plan.SolarPanel != null ? new SolarPanelDetailedDTO
+                {
+                    IdSolarPanel = plan.SolarPanel.IdSolarPanel,
+                    DsMaterial = plan.SolarPanel.DsMaterial,
+                    DsSize = plan.SolarPanel.DsSize,
+                    DsPrice = plan.SolarPanel.DsPrice,
+                    SolarPanelTypeDTO = plan.SolarPanel.SolarPanelType != null ? new SolarPanelTypeDetailedDTO
+                    {
+                        IdSolarPanelType = plan.SolarPanel.SolarPanelType.IdSolarPanelType,
+                        DsVoltage = plan.SolarPanel.SolarPanelType.DsVoltage,
+                        DsModel = plan.SolarPanel.SolarPanelType.DsModel,
+                        DsManufacturer = plan.SolarPanel.SolarPanelType.DsManufacturer,
+                        DsCellType = plan.SolarPanel.SolarPanelType.DsCellType,
+                        DsCostPerWatts = plan.SolarPanel.SolarPanelType.DsCostPerWatts,
+                        DsProductWarranty = plan.SolarPanel.SolarPanelType.DsProductWarranty
+                    } : null
+                } : null,
+                WindTurbine = plan.WindTurbine != null ? new WindTurbineDetailedDTO
+                {
+                    IdWindTurbine = plan.WindTurbine.IdWindTurbine,
+                    DsMaterial = plan.WindTurbine.DsMaterial,
+                    DsSize = plan.WindTurbine.DsSize,
+                    DsPrice = plan.WindTurbine.DsPrice,
+                    WindTurbineTypeDTO = plan.WindTurbine.WindTurbineType != null ? new WindTurbineTypeDetailedDTO
+                    {
+                        IdWindTurbineType = plan.WindTurbine.WindTurbineType.IdWindTurbineType,
+                        DsVoltage = plan.WindTurbine.WindTurbineType.DsVoltage,
+                        DsModel = plan.WindTurbine.WindTurbineType.DsModel,
+                        DsManufacturer = plan.WindTurbine.WindTurbineType.DsManufacturer,
+                        DsGeneratorType = plan.WindTurbine.WindTurbineType.DsGeneratorType,
+                        DsWarrantyYears = plan.WindTurbine.WindTurbineType.DsWarrantyYears,
+                    } : null
+                }:null
+            });
 
-        return planDTOs;
+            return planDTOs;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Erro ao buscar os planos. ", ex);
+        }
     }
 
     /// <summary>

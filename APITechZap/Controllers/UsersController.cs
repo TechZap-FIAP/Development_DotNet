@@ -40,7 +40,7 @@ public class UsersController : ControllerBase
     /// <param name="request">Dados de login do usuário</param>
     /// <returns>Token de autenticação</returns>
     /// <response code="200">Login realizado com sucesso.</response>
-    /// <response code="401">Erro de autenticação.</response>
+    /// <response code="401">E-mail ou senha inválidos</response>
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] UserLoginDTO request)
     {
@@ -93,7 +93,8 @@ public class UsersController : ControllerBase
     /// </summary>
     /// <param name="request">Dados de registro do usuário</param>
     /// <returns>Resultado do registro</returns>
-    /// <response code="200">Registro realizado com sucesso.</response>
+    /// <response code="200">Usuário cadastrado com sucesso</response>
+    /// <response code="400">Invalid email address</response>
     /// <response code="400">E-mail já está em uso.</response>
     /// <response code="500">Erro ao registrar usuário.</response>
     [HttpPost("register")]
@@ -186,10 +187,9 @@ public class UsersController : ControllerBase
     /// <summary>
     /// Redefine a senha pelo E-mail
     /// </summary>
-    /// <param name="actualEmail">O E-mail do usuário a ser enviado o link de redefinição.</param>
-    /// <returns>Uma mensagem de sucesso.</returns>
-    /// <response code="200">Link enviado com sucesso.</response>
-    /// <response code="404">Usuário não encontrado.</response>
+    /// <param name="actualEmail">O E-mail do usuário a ser solicitado o link de redefinição.</param>
+    /// <returns>Retorna o Link para redefinição</returns>
+    /// <response code="404">Id não encontrado.</response>
     /// <response code="500">Erro ao enviar e-mail de redefinição de senha.</response>
     [HttpPost("forgot-password/{actualEmail}")]
     public async Task<ActionResult<string>> ForgotPassword(string actualEmail)

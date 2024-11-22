@@ -110,11 +110,13 @@ public class SolarPanelRepository : ISolarPanelRepository
         {
             var solarPanelDTOs = solarPanels.Select(s => new SolarPanelDetailedDTO
             {
+                IdSolarPanel = s.IdSolarPanel,
                 DsMaterial = s.DsMaterial,
                 DsSize = s.DsSize,
                 DsPrice = s.DsPrice,
-                SolarPanelTypeDTO = s.SolarPanelType != null ? new SolarPanelTypeDTO
+                SolarPanelTypeDTO = s.SolarPanelType != null ? new SolarPanelTypeDetailedDTO
                 {
+                    IdSolarPanelType = s.SolarPanelType.IdSolarPanelType,
                     DsVoltage = s.SolarPanelType.DsVoltage,
                     DsModel = s.SolarPanelType.DsModel,
                     DsManufacturer = s.SolarPanelType.DsManufacturer,
@@ -146,11 +148,13 @@ public class SolarPanelRepository : ISolarPanelRepository
         {
             var solarPanelDTO = new SolarPanelDetailedDTO
             {
+                IdSolarPanel = id,
                 DsMaterial = solarPanel.DsMaterial,
                 DsSize = solarPanel.DsSize,
                 DsPrice = solarPanel.DsPrice,
-                SolarPanelTypeDTO = solarPanel.SolarPanelType != null ? new SolarPanelTypeDTO
+                SolarPanelTypeDTO = solarPanel.SolarPanelType != null ? new SolarPanelTypeDetailedDTO
                 {
+                    IdSolarPanelType = solarPanel.SolarPanelType.IdSolarPanelType,
                     DsVoltage = solarPanel.SolarPanelType.DsVoltage,
                     DsModel = solarPanel.SolarPanelType.DsModel,
                     DsManufacturer = solarPanel.SolarPanelType.DsManufacturer,
