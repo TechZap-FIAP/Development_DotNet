@@ -32,7 +32,7 @@ public class AddressRepository : IAddressRepository
     public async Task<string> AddAddressAsync(int userId, AddressDTO request)
     {
         var user = await _dbContext.Users
-            .Include(a => a.Address) // Se você deseja carregar o endereço atual
+            .Include(a => a.Address)
             .FirstOrDefaultAsync(a => a.IdUser == userId && a.DtDeletedAt == null) 
             ?? throw new Exception("Usuário não encontrado.");
 
@@ -135,7 +135,9 @@ public class AddressRepository : IAddressRepository
     /// <exception cref="Exception"></exception>
     public async Task<Address> GetAddressByUserIdAsync(int userId)
     {
-        var address = await _dbContext.Addresses.FirstOrDefaultAsync(a => a.IdUser == userId && a.DtDeletedAt == null) ?? throw new Exception("Endereço não encontrado!");
+        var address = await _dbContext.Addresses
+            .FirstOrDefaultAsync(a => a.IdUser == userId && a.DtDeletedAt == null) 
+            ?? throw new Exception("Endereço não encontrado!");
 
         return address;
     }
