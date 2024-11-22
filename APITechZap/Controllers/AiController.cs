@@ -27,16 +27,12 @@ public class AiController : ControllerBase
     /// <summary>
     /// Suporte para ajuda ao usuário
     /// </summary>
-    /// <param name="userQuery"></param>
+    /// <param name="input"></param>
     /// <returns></returns>
-    [HttpPost]
-    public async Task<IActionResult> GenerateResponse([FromBody] UserQueryDTO userQuery)
+    [HttpGet]
+    public async Task<IActionResult> TriggerOpenAI([FromQuery] string input)
     {
-        if (string.IsNullOrWhiteSpace(userQuery?.Query))
-            return BadRequest("A consulta não pode estar vazia.");
-
-        var response = await _aiService.GetApplicationHelpAsync(userQuery.Query);
-
-        return Ok(new { response });
+        var response = await _aiService.TriggerOpenAI(input);
+        return Ok(response);
     }
 }

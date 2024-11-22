@@ -8,7 +8,7 @@ public interface IAiService
     /// <summary>
     /// Metodo para auxiliar o usuário com IA
     /// </summary>
-    /// <param name="userQuery"></param>
+    /// <param name="prompt"></param>
     /// <returns></returns>
-    Task<string> GetApplicationHelpAsync(string userQuery);
+    Task<string> TriggerOpenAI(string prompt);
 }

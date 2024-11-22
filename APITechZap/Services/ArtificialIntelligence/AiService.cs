@@ -1,6 +1,8 @@
 ﻿
 using System.Text.Json;
 using System.Text;
+using APITechZap.Models.DTOs.OpenAiDTOs;
+using System.Net.Http.Headers;
 
 namespace APITechZap.Services.ArtificialIntelligence;
 
@@ -9,54 +11,58 @@ namespace APITechZap.Services.ArtificialIntelligence;
 /// </summary>
 public class AiService : IAiService
 {
-    private readonly HttpClient _httpClient;
+    /// <summary>
+    /// Configuração
+    /// </summary>
+    public readonly IConfiguration _configuration;
 
     /// <summary>
-    /// Busca o endpoint da IA
+    /// Construtor da Classe AiService
     /// </summary>
-    /// <param name="httpClient"></param>
-    public AiService(HttpClient httpClient)
+    /// <param name="configuration"></param>
+    public AiService(IConfiguration configuration)
     {
-        _httpClient = httpClient;
+        _configuration = configuration;
     }
 
     /// <summary>
-    /// Metodo para auxiliar o usuário com a IA
+    /// Método para acionar o OpenAI
     /// </summary>
-    /// <param name="userQuery"></param>
+    /// <param name="prompt"></param>
     /// <returns></returns>
-    public async Task<string> GetApplicationHelpAsync(string userQuery)
+    /// <exception cref="System.Exception"></exception>
+    public async Task<string> TriggerOpenAI(string prompt)
     {
-        // Restrições para garantir que a IA só responde sobre a aplicação.
-        var prompt = $"Você é um assistente projetado exclusivamente para ajudar os usuários da aplicação. " +
-                     $"Só responda perguntas diretamente relacionadas à aplicação. Outras informações ou dúvidas externas são inválidas. " +
-                     $"Não informar documento de usuário ou da empresa. " +
-                     $"Pergunta: {userQuery}";
+        var apiKey = _configuration.GetValue<string>("AiService:ApiKey");
+        var baseUrl = _configuration.GetValue<string>("AiService:Uri");
 
-        var requestBody = new
+        HttpClient client = new HttpClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+
+        var request = new OpenAIRequestDto
         {
-            model = "gpt-4o",
-            prompt = prompt,
-            max_tokens = 150,
-            temperature = 0.5
+            Model = "gpt-3.5-turbo",
+            Messages = new List<OpenAIMessageRequestDto>{
+                    new OpenAIMessageRequestDto
+                    {
+                        Role = "user",
+                        Content = prompt
+                    }
+                },
+            MaxTokens = 100
         };
-
-        var requestContent = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
-
-        try
+        var json = JsonSerializer.Serialize(request);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await client.PostAsync(baseUrl, content);
+        var resjson = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
         {
-            var response = await _httpClient.PostAsync("completions", requestContent);
-            response.EnsureSuccessStatusCode();
+            var errorResponse = JsonSerializer.Deserialize<OpenAIErrorResponseDto>(resjson);
+            throw new Exception(errorResponse.Error.Message);
+        }
+        var data = JsonSerializer.Deserialize<OpenAIResponseDto>(resjson);
+        var responseText = data.choices[0].message.content;
 
-            var responseContent = await response.Content.ReadAsStringAsync();
-            var jsonResponse = JsonDocument.Parse(responseContent);
-            var completion = jsonResponse.RootElement.GetProperty("choices")[0].GetProperty("text").GetString()?.Trim() ?? "Sem resposta.";
-            return completion ?? string.Empty;
-        }
-        catch (Exception ex)
-        {
-            // Tratamento de erros
-            return $"Ocorreu um erro ao se comunicar com o OpenAI: {ex.Message}";
-        }
+        return responseText;
     }
 }
