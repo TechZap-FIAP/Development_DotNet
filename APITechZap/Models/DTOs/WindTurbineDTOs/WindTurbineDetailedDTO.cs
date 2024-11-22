@@ -1,9 +1,9 @@
 ﻿namespace APITechZap.Models.DTOs.WindTurbineDTOs;
 
 /// <summary>
-/// DTO de Turbina Eólica
+/// DTO de Turbina Eólica Detalhada
 /// </summary>
-public class WindTurbineDTO
+public class WindTurbineDetailedDTO
 {
     /// <summary>
     /// Tamanho da Turbina Eólica
@@ -19,4 +19,9 @@ public class WindTurbineDTO
     /// Preço da Turbina Eólica
     /// </summary>
     public double? DsPrice { get; set; }
+
+    /// <summary>
+    /// Tipo de Turbina Eólica
+    /// </summary>
+    public WindTurbineTypeDTO? WindTurbineTypeDTO { get; set; }
 }

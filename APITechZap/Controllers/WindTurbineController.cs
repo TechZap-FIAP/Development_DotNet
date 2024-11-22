@@ -1,4 +1,5 @@
-﻿using APITechZap.Repository.Interface;
+﻿using APITechZap.Models.DTOs.WindTurbineDTOs;
+using APITechZap.Repository.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +22,34 @@ public class WindTurbineController : ControllerBase
     public WindTurbineController(IWindTurbineRepository windTurbineRepository)
     {
         _windTurbineRepository = windTurbineRepository;
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddWindTurbinesAsync([FromBody] WindTurbineDTO request)
+    {
+        try
+        {
+            var windTurbines = await _windTurbineRepository.AddWindTurbineAsync(request);
+            return Ok(windTurbines);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+    }
+
+    [HttpPost("type/{windTurbineId}")]
+    public async Task<IActionResult> AddWindTurbineTypesAsync(int windTurbineId, [FromBody] WindTurbineTypeDTO request)
+    {
+        try
+        {
+            var windTurbineType = await _windTurbineRepository.AddWindTurbineTypeAsync(windTurbineId, request);
+            return Ok(windTurbineType);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     /// <summary>

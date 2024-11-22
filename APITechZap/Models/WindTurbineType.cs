@@ -47,6 +47,18 @@ public class WindTurbineType
     /// Garantia da Turbina Eólica em Anos
     /// </summary>
     [Column("DS_WARRANTY_YEARS")]
-    public int DsWarrantyYears { get; set; }
+    public int? DsWarrantyYears { get; set; }
 
+    /// <summary>
+    /// Identificador doTipo de Turbina Eólica
+    /// </summary>
+    [ForeignKey("WindTurbine")]
+    [Column("ID_WIND_TURBINE")]
+    [JsonIgnore]
+    public int IdWindTurbine { get; set; }
+
+    /// <summary>
+    /// Turbina Eólica
+    /// </summary>
+    public WindTurbine? WindTurbine { get; set; }
 }
