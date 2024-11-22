@@ -12,8 +12,8 @@ using Oracle.EntityFrameworkCore.Metadata;
 namespace APITechZap.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241120022951_V2_AlterTable_Address_UserAdditionalData")]
-    partial class V2_AlterTable_Address_UserAdditionalData
+    [Migration("20241122045614_V1_CreateTables")]
+    partial class V1_CreateTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,9 +66,9 @@ namespace APITechZap.Migrations
                         .HasColumnType("TIMESTAMP(7)")
                         .HasColumnName("DT_CREATED_AT");
 
-                    b.Property<DateTime?>("DtFinishedAt")
+                    b.Property<DateTime?>("DtDeletedAt")
                         .HasColumnType("TIMESTAMP(7)")
-                        .HasColumnName("DT_FINISHED_AT");
+                        .HasColumnName("DT_DELETED_AT");
 
                     b.Property<DateTime?>("DtUpdatedAt")
                         .HasColumnType("TIMESTAMP(7)")
@@ -152,12 +152,19 @@ namespace APITechZap.Migrations
                         .HasColumnType("BINARY_DOUBLE")
                         .HasColumnName("DS_SIZE");
 
-                    b.Property<int?>("SolarPanelTypeIdSolarPanelType")
-                        .HasColumnType("NUMBER(10)");
+                    b.Property<DateTime>("DtCreatedAt")
+                        .HasColumnType("TIMESTAMP(7)")
+                        .HasColumnName("DT_CREATED_AT");
+
+                    b.Property<DateTime?>("DtDeletedAt")
+                        .HasColumnType("TIMESTAMP(7)")
+                        .HasColumnName("DT_DELETED_AT");
+
+                    b.Property<DateTime?>("DtUpdatedAt")
+                        .HasColumnType("TIMESTAMP(7)")
+                        .HasColumnName("DT_UPDATED_AT");
 
                     b.HasKey("IdSolarPanel");
-
-                    b.HasIndex("SolarPanelTypeIdSolarPanelType");
 
                     b.ToTable("T_TZ_SOLAR_PANEL");
                 });
@@ -195,7 +202,14 @@ namespace APITechZap.Migrations
                         .HasColumnType("NVARCHAR2(2000)")
                         .HasColumnName("DS_VOLTAGE");
 
+                    b.Property<int>("IdSolarPanel")
+                        .HasColumnType("NUMBER(10)")
+                        .HasColumnName("ID_SOLAR_PANEL");
+
                     b.HasKey("IdSolarPanelType");
+
+                    b.HasIndex("IdSolarPanel")
+                        .IsUnique();
 
                     b.ToTable("T_TZ_SOLAR_PANEL_TYPE");
                 });
@@ -277,9 +291,9 @@ namespace APITechZap.Migrations
                         .HasColumnType("TIMESTAMP(7)")
                         .HasColumnName("DT_CREATED_AT");
 
-                    b.Property<DateTime?>("DtFinishedAt")
+                    b.Property<DateTime?>("DtDeletedAt")
                         .HasColumnType("TIMESTAMP(7)")
-                        .HasColumnName("DT_FINISHED_AT");
+                        .HasColumnName("DT_DELETED_AT");
 
                     b.Property<DateTime?>("DtUpdatedAt")
                         .HasColumnType("TIMESTAMP(7)")
@@ -318,12 +332,19 @@ namespace APITechZap.Migrations
                         .HasColumnType("BINARY_DOUBLE")
                         .HasColumnName("DS_SIZE");
 
-                    b.Property<int?>("WindTurbineTypeIdWindTurbineType")
-                        .HasColumnType("NUMBER(10)");
+                    b.Property<DateTime>("DtCreatedAt")
+                        .HasColumnType("TIMESTAMP(7)")
+                        .HasColumnName("DT_CREATED_AT");
+
+                    b.Property<DateTime?>("DtDeletedAt")
+                        .HasColumnType("TIMESTAMP(7)")
+                        .HasColumnName("DT_DELETED_AT");
+
+                    b.Property<DateTime?>("DtUpdatedAt")
+                        .HasColumnType("TIMESTAMP(7)")
+                        .HasColumnName("DT_UPDATED_AT");
 
                     b.HasKey("IdWindTurbine");
-
-                    b.HasIndex("WindTurbineTypeIdWindTurbineType");
 
                     b.ToTable("T_TZ_WIND_TURBINE");
                 });
@@ -353,11 +374,18 @@ namespace APITechZap.Migrations
                         .HasColumnType("NVARCHAR2(2000)")
                         .HasColumnName("DS_VOLTAGE");
 
-                    b.Property<int>("DsWarrantyYears")
+                    b.Property<int?>("DsWarrantyYears")
                         .HasColumnType("NUMBER(10)")
                         .HasColumnName("DS_WARRANTY_YEARS");
 
+                    b.Property<int>("IdWindTurbine")
+                        .HasColumnType("NUMBER(10)")
+                        .HasColumnName("ID_WIND_TURBINE");
+
                     b.HasKey("IdWindTurbineType");
+
+                    b.HasIndex("IdWindTurbine")
+                        .IsUnique();
 
                     b.ToTable("T_TZ_WIND_TURBINE_TYPE");
                 });
@@ -394,13 +422,15 @@ namespace APITechZap.Migrations
                     b.Navigation("WindTurbine");
                 });
 
-            modelBuilder.Entity("APITechZap.Models.SolarPanel", b =>
+            modelBuilder.Entity("APITechZap.Models.SolarPanelType", b =>
                 {
-                    b.HasOne("APITechZap.Models.SolarPanelType", "SolarPanelType")
-                        .WithMany()
-                        .HasForeignKey("SolarPanelTypeIdSolarPanelType");
+                    b.HasOne("APITechZap.Models.SolarPanel", "SolarPanel")
+                        .WithOne("SolarPanelType")
+                        .HasForeignKey("APITechZap.Models.SolarPanelType", "IdSolarPanel")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("SolarPanelType");
+                    b.Navigation("SolarPanel");
                 });
 
             modelBuilder.Entity("APITechZap.Models.UserAdditionalData", b =>
@@ -414,13 +444,20 @@ namespace APITechZap.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("APITechZap.Models.WindTurbine", b =>
+            modelBuilder.Entity("APITechZap.Models.WindTurbineType", b =>
                 {
-                    b.HasOne("APITechZap.Models.WindTurbineType", "WindTurbineType")
-                        .WithMany()
-                        .HasForeignKey("WindTurbineTypeIdWindTurbineType");
+                    b.HasOne("APITechZap.Models.WindTurbine", "WindTurbine")
+                        .WithOne("WindTurbineType")
+                        .HasForeignKey("APITechZap.Models.WindTurbineType", "IdWindTurbine")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("WindTurbineType");
+                    b.Navigation("WindTurbine");
+                });
+
+            modelBuilder.Entity("APITechZap.Models.SolarPanel", b =>
+                {
+                    b.Navigation("SolarPanelType");
                 });
 
             modelBuilder.Entity("APITechZap.Models.User", b =>
@@ -430,6 +467,11 @@ namespace APITechZap.Migrations
                     b.Navigation("ContractedPlans");
 
                     b.Navigation("UserAdditionalData");
+                });
+
+            modelBuilder.Entity("APITechZap.Models.WindTurbine", b =>
+                {
+                    b.Navigation("WindTurbineType");
                 });
 #pragma warning restore 612, 618
         }

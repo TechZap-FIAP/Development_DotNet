@@ -93,6 +93,18 @@ public class ApplicationDbContext : DbContext
             .WithOne()
             .HasForeignKey<ContractedPlan>(cp => cp.IdWindTurbine);
 
+        // Relacionamento 1:1 entre SolarPanel e SolarPanelType
+        modelBuilder.Entity<SolarPanel>()
+            .HasOne(sp => sp.SolarPanelType)
+            .WithOne(spType => spType.SolarPanel)
+            .HasForeignKey<SolarPanelType>(spType => spType.IdSolarPanel);
+
+        // Relacionamento 1:1 entre WindTurbine e WindTurbineType
+        modelBuilder.Entity<WindTurbine>()
+            .HasOne(wt => wt.WindTurbineType)
+            .WithOne(wtType => wtType.WindTurbine)
+            .HasForeignKey<WindTurbineType>(wtType => wtType.IdWindTurbine);
+
         base.OnModelCreating(modelBuilder);
     }
 }

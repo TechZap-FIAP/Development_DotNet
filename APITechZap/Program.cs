@@ -29,17 +29,8 @@ builder.Services.AddHttpClient<IAuthService, AuthService>((sp, httpClient) =>
     httpClient.BaseAddress = new Uri(configuration["Authentication:TokenUri"]!);
 });
 
-builder.Services.AddHttpClient<IAiService, AiService>((sp, httpClient) =>
-{
-    var configuration = sp.GetRequiredService<IConfiguration>();
-
-    var aiServiceUri = configuration["AiService:Uri"]! ?? throw new Exception("AI Service URI não está configurado");
-    httpClient.BaseAddress = new Uri(aiServiceUri);
-
-    var apiKey = configuration["AiService:ApiKey"]! ?? throw new Exception("API Key da AI Service não está configurado");
-    var response = httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
-    Console.WriteLine(response);
-});
+// Add Transient - AI Service
+builder.Services.AddTransient<IAiService, AiService>();
 
 // Add Scoped Tables
 builder.Services.AddScoped<IUserRepository, UserRepository>();
