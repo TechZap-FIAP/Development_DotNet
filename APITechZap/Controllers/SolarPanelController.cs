@@ -1,4 +1,7 @@
-﻿using APITechZap.Repository.Interface;
+﻿using APITechZap.Models.DTOs.SolarPanelDTOs;
+using APITechZap.Models.DTOs.WindTurbineDTOs;
+using APITechZap.Repository;
+using APITechZap.Repository.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +25,45 @@ public class SolarPanelController : ControllerBase
     public SolarPanelController(ISolarPanelRepository solarPanelRepository)
     {
         _solarPanelRepository = solarPanelRepository;
+    }
+
+    /// <summary>
+    /// Adiciona o Painel Solar
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost]
+    public async Task<IActionResult> AddSolarPanelAsync([FromBody] SolarPanelDTO request)
+    {
+        try
+        {
+            var solarPanels = await _solarPanelRepository.AddSolarPanelAsync(request);
+            return Ok(request);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Adiciona o Tipo do Painel Solar
+    /// </summary>
+    /// <param name="solarPanelId"></param>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("type/{solarPanelId}")]
+    public async Task<IActionResult> AddSolarPanelTypesAsync(int solarPanelId, [FromBody] SolarPanelTypeDTO request)
+    {
+        try
+        {
+            var solarPanelType = await _solarPanelRepository.AddSolarPanelTypeAsync(solarPanelId, request);
+            return Ok(solarPanelType);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     /// <summary>

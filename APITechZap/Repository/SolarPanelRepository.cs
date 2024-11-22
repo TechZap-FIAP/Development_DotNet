@@ -25,17 +25,90 @@ public class SolarPanelRepository : ISolarPanelRepository
     }
 
     /// <summary>
+    /// Adiciona o Painel Solar
+    /// </summary>
+    /// <param name="solarPanelDTO"></param>
+    /// <returns></returns>
+    public async Task<string> AddSolarPanelAsync(SolarPanelDTO solarPanelDTO)
+    {
+        if (solarPanelDTO == null)
+        {
+            throw new Exception("Campos vazios, preencha-os");
+        }
+
+        var solarPanel = new SolarPanel
+        {
+            DsMaterial = solarPanelDTO.DsMaterial,
+            DsSize = solarPanelDTO.DsSize,
+            DsPrice = solarPanelDTO.DsPrice
+        };
+
+        try
+        {
+            await _dbContext.SolarPanels.AddAsync(solarPanel);
+            await _dbContext.SaveChangesAsync();
+
+            return "Painel Solar Adicionado com Sucesso";
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Ocorreu um erro ao adicionar o painel solar", ex);
+        }
+    }
+
+    /// <summary>
+    /// Adiciona o Tipo de Painel Solar
+    /// </summary>
+    /// <param name="solarPanelId"></param>
+    /// <param name="solarPanelTypeDTO"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public async Task<string> AddSolarPanelTypeAsync(int solarPanelId, SolarPanelTypeDTO solarPanelTypeDTO)
+    {
+        var solarPanel = await _dbContext.SolarPanels
+            .Include(s => s.SolarPanelType)
+            .FirstOrDefaultAsync(s => s.IdSolarPanel == solarPanelId && s.DtDeletedAt == null) 
+            ?? throw new Exception("Painel Solar não encontrado!");
+
+        var solarPanelType = new SolarPanelType
+        {
+            DsVoltage = solarPanelTypeDTO.DsVoltage,
+            DsModel = solarPanelTypeDTO.DsModel,
+            DsManufacturer = solarPanelTypeDTO.DsManufacturer,
+            DsCellType = solarPanelTypeDTO.DsCellType,
+            DsCostPerWatts = solarPanelTypeDTO.DsCostPerWatts,
+            DsProductWarranty = solarPanelTypeDTO.DsProductWarranty,
+            IdSolarPanel = solarPanel.IdSolarPanel
+        };
+
+        try
+        {
+            await _dbContext.SolarPanelTypes.AddAsync(solarPanelType);
+            await _dbContext.SaveChangesAsync();
+
+            return "Tipo de Painel Solar Adicionado com Sucesso";
+        }
+        catch (Exception ex)
+        {
+            return ex.Message;
+        }
+    }
+
+    /// <summary>
     /// Get all Solar Panels
     /// </summary>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<IEnumerable<SolarPanelDTO>> GetAllSolarPanelsAsync()
+    public async Task<IEnumerable<SolarPanelDetailedDTO>> GetAllSolarPanelsAsync()
     {
-        var solarPanels = await _dbContext.SolarPanels.Include(s => s.SolarPanelType).ToListAsync() ?? throw new Exception("Painéis Solares não encontrados!");
+        var solarPanels = await _dbContext.SolarPanels
+            .Where(s => s.DtDeletedAt == null)
+            .Include(s => s.SolarPanelType)
+            .ToListAsync() ?? throw new Exception("Painéis Solares não encontrados!");
 
         try
         {
-            var solarPanelDTOs = solarPanels.Select(s => new SolarPanelDTO
+            var solarPanelDTOs = solarPanels.Select(s => new SolarPanelDetailedDTO
             {
                 DsMaterial = s.DsMaterial,
                 DsSize = s.DsSize,
@@ -47,7 +120,7 @@ public class SolarPanelRepository : ISolarPanelRepository
                     DsManufacturer = s.SolarPanelType.DsManufacturer,
                     DsCellType = s.SolarPanelType.DsCellType,
                     DsCostPerWatts = s.SolarPanelType.DsCostPerWatts,
-                    DsProductWarranty = s.SolarPanelType.DsProductWarranty,
+                    DsProductWarranty = s.SolarPanelType.DsProductWarranty
                 } : null
             });
 
@@ -65,13 +138,13 @@ public class SolarPanelRepository : ISolarPanelRepository
     /// <param name="id"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<SolarPanelDTO> GetSolarPanelByIdAsync(int id)
+    public async Task<SolarPanelDetailedDTO> GetSolarPanelByIdAsync(int id)
     {
         var solarPanel = await _dbContext.SolarPanels.Include(s => s.SolarPanelType).FirstOrDefaultAsync(s => s.IdSolarPanel == id) ?? throw new Exception("Painel Solar não encontrado ou desativado!");
 
         try
         {
-            var solarPanelDTO = new SolarPanelDTO
+            var solarPanelDTO = new SolarPanelDetailedDTO
             {
                 DsMaterial = solarPanel.DsMaterial,
                 DsSize = solarPanel.DsSize,
@@ -83,7 +156,7 @@ public class SolarPanelRepository : ISolarPanelRepository
                     DsManufacturer = solarPanel.SolarPanelType.DsManufacturer,
                     DsCellType = solarPanel.SolarPanelType.DsCellType,
                     DsCostPerWatts = solarPanel.SolarPanelType.DsCostPerWatts,
-                    DsProductWarranty = solarPanel.SolarPanelType.DsProductWarranty,
+                    DsProductWarranty = solarPanel.SolarPanelType.DsProductWarranty
                 } : null
             };
 

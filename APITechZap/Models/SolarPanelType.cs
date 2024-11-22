@@ -54,4 +54,17 @@ public class SolarPanelType
     /// </summary>
     [Column("DS_PRODUCT_WARRANTY")]
     public int? DsProductWarranty { get; set; }
+
+    /// <summary>
+    /// Identificador do Tipo de Painel Solar
+    /// </summary>
+    [ForeignKey("SolarPanel")]
+    [Column("ID_SOLAR_PANEL")]
+    [JsonIgnore]
+    public int IdSolarPanel { get; set; }
+
+    /// <summary>
+    /// Painel Solar
+    /// </summary>
+    public SolarPanel? SolarPanel { get; set; }
 }
