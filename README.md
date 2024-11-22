@@ -6,9 +6,9 @@ Esta documentação descreve a plataforma **S.O.L** da empresa **TechZap**, uma 
 
 - **RM99513** - Rodrigo Batista Freire - Java Advanced
 - **RM99562** - Kaique Santos de Andrade - Mobile Development
-- **RM99466** - Marcelo Augusto de Mello Paixão - Development with .NET e DevOps & Cloud Computing
+- **RM99466** - Marcelo Augusto de Mello Paixão - Development with .NET, Disruptive Architectures (IOT) e DevOps Tools & Cloud Computing
 - **RM97967** - Vinicius Oliveira de Almeida - Mastering Database
-- **RM98644** - Thiago Martins Bezerra - Disruptive Architectures (IA)
+- **RM98644** - Thiago Martins Bezerra - Compliance Assurance
 
 # Primeiros Passos
 
